@@ -28,6 +28,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
+            'user_type' => 'required|string|in:T,S|max:1',
             'email' => 'required|email',
             'password' => 'required',
             'c_password' => 'required|same:password',
@@ -42,6 +43,7 @@ class UserController extends Controller
         $user = User::create($input);
         $success['token'] =  $user->createToken('nApp')->accessToken;
         $success['name'] =  $user->name;
+        $success['user_type'] =  $user->user_type;
 
         return response()->json(['success'=>$success], $this->successStatus);
     }

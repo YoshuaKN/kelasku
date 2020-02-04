@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'user_type', 'password',
     ];
 
     /**
@@ -30,5 +30,8 @@ class User extends Authenticatable
 
     public function OauthAcessToken(){
         return $this->hasMany(OauthAccessToken::class);
+    }
+    public function kelas() {
+        return $this->belongsToMany(Kelas::class, "user_kelas", "user_id", "kelas_id");
     }
 }
