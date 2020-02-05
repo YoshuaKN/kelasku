@@ -13,6 +13,12 @@ class KelasController extends Controller
 {
     public $successStatus = 200;
 
+    private function isInKelas($user, $kelas_id){
+        if (Kelas::find($kelas_id)->hasUser($user))
+            return true;
+        return false;
+    }
+
     public function getAllKelas()
     {
         $user = Auth::user();
@@ -33,7 +39,7 @@ class KelasController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:255',
-            'day' => 'required|integer|between:1,7',
+            'day' => 'required|integer|between:0,6',
             'time_start' => 'date_format:H:i',
             'time_end' => 'date_format:H:i|after:time_start',
         ]);
@@ -64,11 +70,16 @@ class KelasController extends Controller
     {
         $user = Auth::user();
 
-        if (!Kelas::find($kelas_id)->hasUser($user)) {
+        if (!$this->isInKelas($user, $kelas_id)) {
             return response()->json(['error' => 'You don\'t have access'], 403);
         }
 
         $kelas = Kelas::find($kelas_id);
+
+        if (!$kelas) {
+            return response()->json(['error' => 'Data not found'], 404);
+        }
+
         return response()->json(['success' => $kelas], $this->successStatus);
     }
 
@@ -76,7 +87,7 @@ class KelasController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'max:255',
-            'day' => 'integer|between:1,7',
+            'day' => 'integer|between:0,6',
             'time_start' => 'date_format:H:i',
             'time_end' => 'date_format:H:i',
         ]);
@@ -86,11 +97,15 @@ class KelasController extends Controller
         }
 
         $user = Auth::user();
-        if (!Kelas::find($kelas_id)->hasUser($user)) {
+        if (!$this->isInKelas($user, $kelas_id)) {
             return response()->json(['error' => 'You don\'t have access'], 403);
         }
 
         $kelas = Kelas::find($kelas_id);
+
+        if (!$kelas) {
+            return response()->json(['error' => 'Data not found'], 404);
+        }
 
         if ($request->name != NULL)
             $kelas->name = $request->name;
@@ -114,11 +129,13 @@ class KelasController extends Controller
     {
         $user = Auth::user();
         $kelas = Kelas::find($kelas_id);
+
+        if (!$this->isInKelas($user, $kelas_id) || $user->user_type != 'T' || $kelas->owner != $user->id) {
+            return response()->json(['error' => 'You don\'t have access'], 403);
+        }
+
         if (!$kelas) {
             return response()->json(['error' => 'Data not found'], 404);
-        }
-        if (!$kelas->hasUser($user) || $user->user_type != 'T' || $kelas->owner != $user->id) {
-            return response()->json(['error' => 'You don\'t have access'], 403);
         }
 
         $kelas->user()->detach();
