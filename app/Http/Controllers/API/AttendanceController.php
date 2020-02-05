@@ -12,6 +12,17 @@ class AttendanceController extends Controller
 {
     public $successStatus = 200;
 
+    public function init($user, $kelas)
+    {
+        if (!$kelas) {
+            return response()->json(['error' => 'Data not found'], 404);
+        }
+        if (!$this->isInKelas($user, $kelas->id)) {
+            return response()->json(['error' => 'You don\'t have access'], 403);
+        }
+        return NULL;
+    }
+    
     private function numToDay($num){
         $dayNames = array('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
         return $dayNames[$num];
@@ -32,19 +43,15 @@ class AttendanceController extends Controller
 
     public function postCreateAttendance($kelas_id){
         $user = Auth::user();
-
-        if (!$this->isInKelas($user, $kelas_id)) {
-            return response()->json(['error' => 'You don\'t have access'], 403);
-        }
-
         $kelas = Kelas::find($kelas_id);
 
-        if (!$kelas) {
-            return response()->json(['error' => 'Data not found'], 404);
+        $check = $this->init($user, $kelas);
+        if ($check) {
+            return $check;
         }
 
         if ($this->isKelasOpen($kelas)) {
-            
+
             $attendance = Attendance::where('user_id', $user->id)->where('kelas_id', $kelas_id)->first();
             $now = date('Ymd');
             $time_attendance_before = date('YmdHi', strtotime($attendance->created_at));
@@ -62,5 +69,21 @@ class AttendanceController extends Controller
         } 
 
         return response()->json(['error' => "Kelas hasn't opened yet"], 403);
+    }
+
+    public function getStatusKelas($kelas_id){
+        $user = Auth::user();
+        $kelas = Kelas::find($kelas_id);
+        
+        $check = $this->init($user, $kelas);
+        if ($check) {
+            return $check;
+        }
+
+        if ($this->isKelasOpen($kelas)) {
+            return response()->json(['success' => "open"], $this->successStatus);
+        } else {
+            return response()->json(['success' => "close"], $this->successStatus);
+        }
     }
 }
