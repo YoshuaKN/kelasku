@@ -35,13 +35,23 @@ class AttendanceController extends Controller
         return false;
     }
 
+    private function isAttandanced ($kelas, $attendance, $returnType = "success"){
+        $now = date('Ymd');
+        $time_attendance_before = date('YmdHi', strtotime($attendance->created_at));
+        $time_start = $now.date('Hi', strtotime($kelas->time_start));
+        $time_end = $now.date('Hi', strtotime($kelas->time_end));
+        if ($time_attendance_before >= $time_start && $time_attendance_before <= $time_end) {
+            return response()->json([$returnType => "You are already present in this class"], $this->successStatus);
+        }
+    }
+
     private function isInKelas($user, $kelas_id){
         if (Kelas::find($kelas_id)->hasUser($user))
             return true;
         return false;
     }
 
-    public function postCreateAttendance($kelas_id){
+    public function postCreateAttend($kelas_id){
         $user = Auth::user();
         $kelas = Kelas::find($kelas_id);
 
@@ -51,14 +61,12 @@ class AttendanceController extends Controller
         }
 
         if ($this->isKelasOpen($kelas)) {
-
             $attendance = Attendance::where('user_id', $user->id)->where('kelas_id', $kelas_id)->first();
-            $now = date('Ymd');
-            $time_attendance_before = date('YmdHi', strtotime($attendance->created_at));
-            $time_start = $now.date('Hi', strtotime($kelas->time_start));
-            $time_end = $now.date('Hi', strtotime($kelas->time_end));
-            if ($time_attendance_before >= $time_start && $time_attendance_before <= $time_end) {
-                return response()->json(['error' => "You already attendance"], 403);
+            if ($attendance) {
+                $check = $this->isAttandanced($kelas, $attendance, "error");
+                if ($check) {
+                    return $check;
+                }
             }
 
             $attendance = new Attendance();
@@ -85,5 +93,41 @@ class AttendanceController extends Controller
         } else {
             return response()->json(['success' => "close"], $this->successStatus);
         }
+    }
+
+    public function getAllAttend($kelas_id){
+        $user = Auth::user();
+        $kelas = Kelas::find($kelas_id);
+        
+        $check = $this->init($user, $kelas);
+        if ($check) {
+            return $check;
+        }
+
+        $attendance = Attendance::where('user_id', $user->id)->where('kelas_id', $kelas_id)->get();
+
+        return response()->json(['success' => $attendance], $this->successStatus);
+    }
+
+    public function getStatusAttend($kelas_id){
+        $user = Auth::user();
+        $kelas = Kelas::find($kelas_id);
+        
+        $check = $this->init($user, $kelas);
+        if ($check) {
+            return $check;
+        }
+
+        $attendance = Attendance::where('user_id', $user->id)->where('kelas_id', $kelas_id)->first();
+        if (!$attendance) {
+            return response()->json(['success' => "You are not present in this class"], $this->successStatus);
+        }
+
+        $check = $this->isAttandanced($kelas, $attendance);
+        if ($check) {
+            return $check;
+        }
+            
+        return response()->json(['success' => "You are not present in this class"], $this->successStatus);
     }
 }

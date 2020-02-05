@@ -13,6 +13,17 @@ class KelasController extends Controller
 {
     public $successStatus = 200;
 
+    public function init($user, $kelas)
+    {
+        if (!$kelas) {
+            return response()->json(['error' => 'Data not found'], 404);
+        }
+        if (!$this->isInKelas($user, $kelas->id)) {
+            return response()->json(['error' => 'You don\'t have access'], 403);
+        }
+        return NULL;
+    }
+
     private function isInKelas($user, $kelas_id){
         if (Kelas::find($kelas_id)->hasUser($user))
             return true;
@@ -97,14 +108,11 @@ class KelasController extends Controller
         }
 
         $user = Auth::user();
-        if (!$this->isInKelas($user, $kelas_id)) {
-            return response()->json(['error' => 'You don\'t have access'], 403);
-        }
-
         $kelas = Kelas::find($kelas_id);
-
-        if (!$kelas) {
-            return response()->json(['error' => 'Data not found'], 404);
+        
+        $check = $this->init($user, $kelas);
+        if ($check) {
+            return $check;
         }
 
         if ($request->name != NULL)
@@ -129,13 +137,10 @@ class KelasController extends Controller
     {
         $user = Auth::user();
         $kelas = Kelas::find($kelas_id);
-
-        if (!$this->isInKelas($user, $kelas_id) || $user->user_type != 'T' || $kelas->owner != $user->id) {
-            return response()->json(['error' => 'You don\'t have access'], 403);
-        }
-
-        if (!$kelas) {
-            return response()->json(['error' => 'Data not found'], 404);
+        
+        $check = $this->init($user, $kelas);
+        if ($check) {
+            return $check;
         }
 
         $kelas->user()->detach();
