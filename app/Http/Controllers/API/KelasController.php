@@ -11,41 +11,52 @@ use Validator;
 
 class KelasController extends Controller
 {
+    //Initialize success status code
     public $successStatus = 200;
 
+    //This init function checks whether the kelas exists in the database and whether the user has access to that class
     public function init($user, $kelas)
     {
+        //Checking existence of kelas
         if (!$kelas) {
             return response()->json(['error' => 'Data not found'], 404);
         }
+
+        //Check if user have access by using a function isInKelas
         if (!$this->isInKelas($user, $kelas->id)) {
-            return response()->json(['error' => 'You don\'t have access'], 403);
+            return response()->json(['error' => 'Unauthorized'], 403);
         }
+
         return NULL;
     }
 
+    //This function checks whether the user has access in kelas
     private function isInKelas($user, $kelas_id){
         if (Kelas::find($kelas_id)->hasUser($user))
             return true;
         return false;
     }
 
+    //This function will returns all kelas data that the user has enrolled
     public function getAllKelas()
     {
         $user = Auth::user();
         $kelas = $user->kelas;
-        // foreach ($kelas as $c) {
-        //     $userkelas = UserAndkelasModel::where("user_id", $user->id)->where("kelas_id", $c->id)->get()[0];
-        //     $absent = AbsentModel::where("user_kelas_id", $userkelas->id)->where("created_at", '>', now()->subDays(6))->first();
-        //     $attendance = false;
-        //     if ($absent) {
-        //         $attendance = true;
-        //     }
-        //     $c->attendance = $attendance;
-        // }
         return response()->json(['success' => $kelas], $this->successStatus);
     }
 
+    /*
+    This function creates a kelas with 4 form data, which is :
+        name : a string with value of the kelas's name, max 255 characters.
+        day : the day the kelas take palce, integer value between 0-6 (0 : Sunday, 1 : Monday, ... , 6 : Saturday).
+        time_start : time when the class starts, date format [Hour:Minutes].
+        time_end : time when the class ends, date format [Hour:Minutes], must be greater than the time_start.
+    
+    Rules : 
+        Only teacher can create a kelas.
+
+    Return : kelas data that has been created.
+    */
     public function postCreateKelas(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -61,9 +72,11 @@ class KelasController extends Controller
 
         $user = Auth::user();
 
+        //Check if user is a teacher
         if ($user->user_type != 'T') {
-            return response()->json(['error' => 'You don\'t have access'], 403);
+            return response()->json(['error' => 'Unauthorized'], 403);
         }
+
         $kelas = new Kelas();
         $kelas->name = $request->name;
         $kelas->day = $request->day;
@@ -77,12 +90,22 @@ class KelasController extends Controller
         return response()->json(['success' => $kelas], $this->successStatus);
     }
 
+    /* 
+    This function will return a kelas data with the given id. 
+
+    Rules : 
+        The given kelas_id must be in database.
+        User must be enrolled in the kelas.
+
+    Return :
+        Kelas data.
+    */
     public function getOneKelas($kelas_id)
     {
         $user = Auth::user();
 
         if (!$this->isInKelas($user, $kelas_id)) {
-            return response()->json(['error' => 'You don\'t have access'], 403);
+            return response()->json(['error' => 'Unauthorized'], 403);
         }
 
         $kelas = Kelas::find($kelas_id);
@@ -94,6 +117,16 @@ class KelasController extends Controller
         return response()->json(['success' => $kelas], $this->successStatus);
     }
 
+    /* 
+    This function will update the kelas data with the given id. 
+
+    Rules : 
+        The given kelas_id must be in database.
+        Only the owner of the kelas that can update.
+
+    Return :
+        Updated kelas data
+    */
     public function putUpdateKelas(Request $request, $kelas_id)
     {
         $validator = Validator::make($request->all(), [
@@ -115,6 +148,11 @@ class KelasController extends Controller
             return $check;
         }
 
+        //Check the owner of the given kelas.
+        if ($kelas->owner != $user->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         if ($request->name != NULL)
             $kelas->name = $request->name;
         if ($request->day != NULL)
@@ -127,12 +165,20 @@ class KelasController extends Controller
             }
             $kelas->time_end = $request->time_end;
         }
-        // $kelas->up
         $kelas->update();
 
         return response()->json(['success' => $kelas], $this->successStatus);
     }
+    /* 
+    This function will delete the kelas data with the given id. 
 
+    Rules : 
+        The given kelas_id must be in database.
+        Only the owner of the kelas that can update.
+
+    Return :
+        String = "Delete Success"
+    */
     public function deleteOneKelas($kelas_id)
     {
         $user = Auth::user();
@@ -141,6 +187,10 @@ class KelasController extends Controller
         $check = $this->init($user, $kelas);
         if ($check) {
             return $check;
+        }
+
+        if ($kelas->owner != $user->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
         }
 
         $kelas->user()->detach();

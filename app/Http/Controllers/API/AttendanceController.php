@@ -18,7 +18,7 @@ class AttendanceController extends Controller
             return response()->json(['error' => 'Data not found'], 404);
         }
         if (!$this->isInKelas($user, $kelas->id)) {
-            return response()->json(['error' => 'You don\'t have access'], 403);
+            return response()->json(['error' => 'Unauthorized'], 403);
         }
         return NULL;
     }
