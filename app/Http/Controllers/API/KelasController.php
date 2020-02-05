@@ -107,4 +107,18 @@ class KelasController extends Controller
 
         return response()->json(['success' => $kelas], $this->successStatus);
     }
+
+    public function deleteOneKelas($kelas_id)
+    {
+        $user = Auth::user();
+        if (!Kelas::find($kelas_id)->hasUser($user) || $user->user_type != 'T') {
+            return response()->json(['error' => 'You don\'t have access'], 403);
+        }
+
+        $kelas = Kelas::find($kelas_id);
+        $kelas->user()->detach();
+        $kelas->delete();
+
+        return response()->json(['success' => "Delete success"], $this->successStatus);
+    }
 }
