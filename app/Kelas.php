@@ -21,6 +21,9 @@ class Kelas extends Model
     // }
 
     public function hasUser($user) {
-        return $this->user->contains($user);
+        if ($this->user->contains($user)) {
+            return true;
+        }
+        return false;
     }
 }

@@ -15,7 +15,7 @@ Route::group(['middleware' => 'auth:api'], function(){ //Only authenticated user
         Route::get('/', 'API\KelasController@getAllKelas'); //Get all user's Kelas
         Route::post('/', 'API\KelasController@postCreateKelas'); //Create a new Kelas
 
-        Route::get('/{kelas_id}', 'API\KelasController@Getkelas'); //Get kelas for given id
+        Route::get('/{kelas_id}', 'API\KelasController@getOneKelas'); //Get kelas for given id
         Route::put('/{kelas_id}', 'API\KelasController@Getkelas'); //Update kelas for given id
         Route::delete('/{kelas_id}', 'API\KelasController@Getkelas'); //Delete kelas for given id
 

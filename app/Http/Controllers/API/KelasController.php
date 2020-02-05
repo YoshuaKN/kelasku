@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Kelas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use phpDocumentor\Reflection\Types\Null_;
 use Validator;
 
 class KelasController extends Controller
@@ -38,7 +39,12 @@ class KelasController extends Controller
         if ($validator->fails()) {
             return response()->json(['error'=>$validator->errors()], 401);            
         }
+        
+        $user = Auth::user();
 
+        if ($user->user_type != 'T') {
+            return response()->json(['error'=>'You don\'t have access'], 403);   
+        }
         $kelas = new Kelas();
         $kelas->name = $request->name;
         $kelas->day = $request->day;
@@ -46,9 +52,19 @@ class KelasController extends Controller
         $kelas->time_end = $request->time_end;
         $kelas->save();
 
-        $user = Auth::user();
         $kelas->user()->attach($user);
 
+        return response()->json(['success'=>$kelas], $this->successStatus);
+    }
+
+    public function getOneKelas($kelas_id){
+        $user = Auth::user();
+        
+        if (!Kelas::find($kelas_id)->hasUser($user)) {
+            return response()->json(['error'=>'You don\'t have access'], 403);
+        }
+
+        $kelas = Kelas::find($kelas_id);
         return response()->json(['success'=>$kelas], $this->successStatus);
     }
 }
