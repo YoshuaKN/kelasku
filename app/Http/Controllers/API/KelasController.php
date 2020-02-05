@@ -52,6 +52,7 @@ class KelasController extends Controller
         $kelas->day = $request->day;
         $kelas->time_start = $request->time_start;
         $kelas->time_end = $request->time_end;
+        $kelas->owner = $user->id;
         $kelas->save();
 
         $kelas->user()->attach($user);
@@ -103,7 +104,8 @@ class KelasController extends Controller
             }
             $kelas->time_end = $request->time_end;
         }
-        $kelas->save();
+        // $kelas->up
+        $kelas->update();
 
         return response()->json(['success' => $kelas], $this->successStatus);
     }
@@ -111,11 +113,14 @@ class KelasController extends Controller
     public function deleteOneKelas($kelas_id)
     {
         $user = Auth::user();
-        if (!Kelas::find($kelas_id)->hasUser($user) || $user->user_type != 'T') {
+        $kelas = Kelas::find($kelas_id);
+        if (!$kelas) {
+            return response()->json(['error' => 'Data not found'], 404);
+        }
+        if (!$kelas->hasUser($user) || $user->user_type != 'T' || $kelas->owner != $user->id) {
             return response()->json(['error' => 'You don\'t have access'], 403);
         }
 
-        $kelas = Kelas::find($kelas_id);
         $kelas->user()->detach();
         $kelas->delete();
 
