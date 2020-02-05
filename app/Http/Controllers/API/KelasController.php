@@ -13,7 +13,8 @@ class KelasController extends Controller
 {
     public $successStatus = 200;
 
-    public function getAllKelas(){
+    public function getAllKelas()
+    {
         $user = Auth::user();
         $kelas = $user->kelas;
         // foreach ($kelas as $c) {
@@ -25,10 +26,11 @@ class KelasController extends Controller
         //     }
         //     $c->attendance = $attendance;
         // }
-        return response()->json(['success'=>$kelas], $this->successStatus);
+        return response()->json(['success' => $kelas], $this->successStatus);
     }
 
-    public function postCreateKelas(Request $request){
+    public function postCreateKelas(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:255',
             'day' => 'required|integer|between:1,7',
@@ -37,13 +39,13 @@ class KelasController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json(['error' => $validator->errors()], 401);
         }
-        
+
         $user = Auth::user();
 
         if ($user->user_type != 'T') {
-            return response()->json(['error'=>'You don\'t have access'], 403);   
+            return response()->json(['error' => 'You don\'t have access'], 403);
         }
         $kelas = new Kelas();
         $kelas->name = $request->name;
@@ -54,17 +56,55 @@ class KelasController extends Controller
 
         $kelas->user()->attach($user);
 
-        return response()->json(['success'=>$kelas], $this->successStatus);
+        return response()->json(['success' => $kelas], $this->successStatus);
     }
 
-    public function getOneKelas($kelas_id){
+    public function getOneKelas($kelas_id)
+    {
         $user = Auth::user();
-        
+
         if (!Kelas::find($kelas_id)->hasUser($user)) {
-            return response()->json(['error'=>'You don\'t have access'], 403);
+            return response()->json(['error' => 'You don\'t have access'], 403);
         }
 
         $kelas = Kelas::find($kelas_id);
-        return response()->json(['success'=>$kelas], $this->successStatus);
+        return response()->json(['success' => $kelas], $this->successStatus);
+    }
+
+    public function putUpdateKelas(Request $request, $kelas_id)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'max:255',
+            'day' => 'integer|between:1,7',
+            'time_start' => 'date_format:H:i',
+            'time_end' => 'date_format:H:i',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
+        }
+
+        $user = Auth::user();
+        if (!Kelas::find($kelas_id)->hasUser($user)) {
+            return response()->json(['error' => 'You don\'t have access'], 403);
+        }
+
+        $kelas = Kelas::find($kelas_id);
+
+        if ($request->name != NULL)
+            $kelas->name = $request->name;
+        if ($request->day != NULL)
+            $kelas->day = $request->day;
+        if ($request->time_start != NULL)
+            $kelas->time_start = $request->time_start;
+        if ($request->time_end != NULL) {
+            if ($request->time_end <= $kelas->time_start) {
+                return response()->json(['error' => "time_end must bigger than time_start", 'time_start' => $kelas->time_start, 'time_end' => $request->time_end], 401);
+            }
+            $kelas->time_end = $request->time_end;
+        }
+        $kelas->save();
+
+        return response()->json(['success' => $kelas], $this->successStatus);
     }
 }
