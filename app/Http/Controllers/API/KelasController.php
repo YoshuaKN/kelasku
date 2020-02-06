@@ -3,27 +3,30 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\KelasRequest;
 use App\Kelas;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use phpDocumentor\Reflection\Types\Null_;
-use Validator;
+use Illuminate\Support\Facades\View;
 
 class KelasController extends Controller
 {
     //Initialize success status code
-    public $successStatus = 200;
+    private $successStatus = 200;
 
-    //This init function checks whether the kelas exists in the database and whether the user has access to that class
-    public function init($user, $kelas)
+    public function __construct()
     {
-        //Checking existence of kelas
-        if (!$kelas) {
-            return response()->json(['error' => 'Data not found'], 404);
-        }
+        $this->middleware(function ($request, $next) {
+            $this->user = Auth::user();
 
+            return $next($request);
+        });
+    }
+
+    //This init function checks whether the user has access to that class
+    public function init($kelas)
+    {
         //Check if user have access by using a function isInKelas
-        if (!$this->isInKelas($user, $kelas->id)) {
+        if (!$this->isInKelas($kelas->id)) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -31,8 +34,8 @@ class KelasController extends Controller
     }
 
     //This function checks whether the user has access in kelas
-    private function isInKelas($user, $kelas_id){
-        if (Kelas::find($kelas_id)->hasUser($user))
+    private function isInKelas($kelas_id){
+        if (Kelas::find($kelas_id)->hasUser($this->user))
             return true;
         return false;
     }
@@ -40,8 +43,8 @@ class KelasController extends Controller
     //This function will returns all kelas data that the user has enrolled
     public function getAllKelas()
     {
-        $user = Auth::user();
-        $kelas = $user->kelas;
+        return $this->user;
+        $kelas = $this->user->kelas;
         return response()->json(['success' => $kelas], $this->successStatus);
     }
 
@@ -57,23 +60,10 @@ class KelasController extends Controller
 
     Return : kelas data that has been created.
     */
-    public function postCreateKelas(Request $request)
+    public function postCreateKelas(KelasRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|max:255',
-            'day' => 'required|integer|between:0,6',
-            'time_start' => 'date_format:H:i',
-            'time_end' => 'date_format:H:i|after:time_start',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
-        }
-
-        $user = Auth::user();
-
         //Check if user is a teacher
-        if ($user->user_type != 'T') {
+        if ($this->user->user_type != 'T') {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -82,10 +72,10 @@ class KelasController extends Controller
         $kelas->day = $request->day;
         $kelas->time_start = $request->time_start;
         $kelas->time_end = $request->time_end;
-        $kelas->owner = $user->id;
+        $kelas->owner = $this->user->id;
         $kelas->save();
 
-        $kelas->user()->attach($user);
+        $kelas->user()->attach($this->user);
 
         return response()->json(['success' => $kelas], $this->successStatus);
     }
@@ -102,16 +92,10 @@ class KelasController extends Controller
     */
     public function getOneKelas($kelas_id)
     {
-        $user = Auth::user();
+        $kelas = Kelas::findOrFail($kelas_id);
 
-        if (!$this->isInKelas($user, $kelas_id)) {
+        if (!$kelas->hasUser($this->user)) {
             return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
-        $kelas = Kelas::find($kelas_id);
-
-        if (!$kelas) {
-            return response()->json(['error' => 'Data not found'], 404);
         }
 
         return response()->json(['success' => $kelas], $this->successStatus);
@@ -127,31 +111,22 @@ class KelasController extends Controller
     Return :
         Updated kelas data
     */
-    public function putUpdateKelas(Request $request, $kelas_id)
+    public function putUpdateKelas(KelasRequest $request, $kelas_id)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'max:255',
-            'day' => 'integer|between:0,6',
-            'time_start' => 'date_format:H:i',
-            'time_end' => 'date_format:H:i',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
-        }
-
-        $user = Auth::user();
-        $kelas = Kelas::find($kelas_id);
+        $kelas = Kelas::findOrFail($kelas_id);
         
-        $check = $this->init($user, $kelas);
+        $check = $this->init($this->user, $kelas);
         if ($check) {
             return $check;
         }
 
         //Check the owner of the given kelas.
-        if ($kelas->owner != $user->id) {
+        if ($kelas->owner != $this->user->id) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
+
+        // $kelas->update($request->all());
+        // $kelas->update(['time_start' => $request->time_start]);
 
         if ($request->name != NULL)
             $kelas->name = $request->name;
@@ -169,6 +144,7 @@ class KelasController extends Controller
 
         return response()->json(['success' => $kelas], $this->successStatus);
     }
+    
     /* 
     This function will delete the kelas data with the given id. 
 
@@ -181,15 +157,14 @@ class KelasController extends Controller
     */
     public function deleteOneKelas($kelas_id)
     {
-        $user = Auth::user();
-        $kelas = Kelas::find($kelas_id);
+        $kelas = Kelas::findOrFail($kelas_id);
         
-        $check = $this->init($user, $kelas);
+        $check = $this->init($this->user, $kelas);
         if ($check) {
             return $check;
         }
 
-        if ($kelas->owner != $user->id) {
+        if ($kelas->owner != $this->user->id) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 

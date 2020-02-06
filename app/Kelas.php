@@ -9,7 +9,11 @@ class Kelas extends Model
     protected $table = "kelas";	
     protected $primaryKey = 'id';
     protected $fillable = [
-        'name','day','start_time', 'end_time'
+        'name',
+        'day',
+        'start_time', 
+        'end_time', 
+        'owner'
     ];
 
     public function user() {
@@ -21,9 +25,6 @@ class Kelas extends Model
     // }
 
     public function hasUser($user) {
-        if ($this->user->contains($user)) {
-            return true;
-        }
-        return false;
+        return $this->user->contains($user);
     }
 }

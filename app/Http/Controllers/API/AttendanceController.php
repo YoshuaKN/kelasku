@@ -14,9 +14,7 @@ class AttendanceController extends Controller
 
     public function init($user, $kelas)
     {
-        if (!$kelas) {
-            return response()->json(['error' => 'Data not found'], 404);
-        }
+
         if (!$this->isInKelas($user, $kelas->id)) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
@@ -53,7 +51,7 @@ class AttendanceController extends Controller
 
     public function postCreateAttend($kelas_id){
         $user = Auth::user();
-        $kelas = Kelas::find($kelas_id);
+        $kelas = Kelas::findOrFail($kelas_id);
 
         $check = $this->init($user, $kelas);
         if ($check) {
@@ -81,7 +79,7 @@ class AttendanceController extends Controller
 
     public function getStatusKelas($kelas_id){
         $user = Auth::user();
-        $kelas = Kelas::find($kelas_id);
+        $kelas = Kelas::findOrFail($kelas_id);
         
         $check = $this->init($user, $kelas);
         if ($check) {
@@ -97,7 +95,7 @@ class AttendanceController extends Controller
 
     public function getAllAttend($kelas_id){
         $user = Auth::user();
-        $kelas = Kelas::find($kelas_id);
+        $kelas = Kelas::findOrFail($kelas_id);
         
         $check = $this->init($user, $kelas);
         if ($check) {
@@ -111,7 +109,7 @@ class AttendanceController extends Controller
 
     public function getStatusAttend($kelas_id){
         $user = Auth::user();
-        $kelas = Kelas::find($kelas_id);
+        $kelas = Kelas::findOrFail($kelas_id);
         
         $check = $this->init($user, $kelas);
         if ($check) {
