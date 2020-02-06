@@ -18,8 +18,8 @@ Route::group(['middleware' => 'auth:api'], function(){ //Only authenticated user
         Route::get('/{kelas_id}', 'API\KelasController@getOneKelas'); //Get kelas for given id
         Route::put('/{kelas_id}', 'API\KelasController@putUpdateKelas'); //Update kelas for given id
         Route::delete('/{kelas_id}', 'API\KelasController@deleteOneKelas'); //Delete kelas for given id
-
-        Route::get('/{kelas_id}/status', 'API\AttendanceController@getStatusKelas'); //Get kelas status (open/close)
+        Route::get('/{kelas_id}/status', 'API\KelasController@getStatusKelas'); //Get kelas status (open/close)
+        
         Route::get('/{kelas_id}/attend', 'API\AttendanceController@getAllAttend'); //Get all attend in kelas for given id
         Route::post('/{kelas_id}/attend', 'API\AttendanceController@postCreateAttend'); //Attend a kelas for given id
         Route::get('/{kelas_id}/attend/status', 'API\AttendanceController@getStatusAttend'); //Get user's kelas attendance status for given id (attended/not-attended)

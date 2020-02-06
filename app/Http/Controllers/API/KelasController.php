@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Kelas;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\KelasRequest;
-use App\Kelas;
 use Illuminate\Support\Facades\Auth;
 
 class KelasController extends Controller
@@ -117,5 +117,15 @@ class KelasController extends Controller
         $kelas->delete();
 
         return response()->json(['success' => "Delete success"], $this->successStatus);
+    }
+
+    public function getStatusKelas($kelas_id){
+        $kelas = Kelas::findOrFail($kelas_id);
+
+        if ($kelas->isOpen()) {
+            return response()->json(['success' => "open"], $this->successStatus);
+        } else {
+            return response()->json(['success' => "close"], $this->successStatus);
+        }
     }
 }

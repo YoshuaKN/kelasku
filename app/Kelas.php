@@ -16,8 +16,7 @@ class Kelas extends Model
         'owner'
     ];
 
-    public function customCreate($request, $user)
-    {
+    public function customCreate($request, $user){
         $this->name = $request->name;
         $this->day = $request->day;
         $this->time_start = $request->time_start;
@@ -26,8 +25,7 @@ class Kelas extends Model
         $this->save();
     }
 
-    public function customUpdate($request, $user)
-    {
+    public function customUpdate($request, $user){
         $this->name = $request->name;
         $this->day = $request->day;
         $this->time_start = $request->time_start;
@@ -35,12 +33,19 @@ class Kelas extends Model
         $this->update();
     }
 
-    public function customDelete(){
-
+    private function numToDay($num){
+        $dayNames = array('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
+        return $dayNames[$num];
     }
 
-    public function user()
-    {
+    public function isOpen(){
+        if ($this->numToDay($this->day) == date('D') && $this->time_start <= date('H:i') && $this->time_end >= date('H:i')) {
+            return true;
+        }
+        return false;
+    }
+
+    public function user(){
         return $this->belongsToMany(User::class, "user_kelas", "kelas_id", "user_id");
     }
 
@@ -48,8 +53,7 @@ class Kelas extends Model
         return $this->hasMany(Attendance::class);
     }
 
-    public function hasUser($user)
-    {
+    public function hasUser($user){
         $users = $this->user;
         foreach ($users as $value) {
             if ($value->id == $user->id) {
