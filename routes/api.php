@@ -20,9 +20,9 @@ Route::group(['middleware' => 'auth:api'], function(){ //Only authenticated user
         Route::delete('/{kelas_id}', 'API\KelasController@deleteOneKelas')->middleware('auth.kelas')->middleware('auth.teacher')->middleware('auth.owner'); //Delete kelas for given id
         Route::get('/{kelas_id}/status', 'API\KelasController@getStatusKelas')->middleware('auth.kelas'); //Get kelas status (open/close)
 
-        Route::get('/{kelas_id}/attend', 'API\AttendanceController@getAllAttend'); //Get all attend in kelas for given id
-        Route::post('/{kelas_id}/attend', 'API\AttendanceController@postCreateAttend'); //Attend a kelas for given id
-        Route::get('/{kelas_id}/attend/status', 'API\AttendanceController@getStatusAttend'); //Get user's kelas attendance status for given id (attended/not-attended)
+        Route::get('/{kelas_id}/attend', 'API\AttendanceController@getAllAttend')->middleware('auth.kelas'); //Get all attend in kelas for given id
+        Route::post('/{kelas_id}/attend', 'API\AttendanceController@postCreateAttend')->middleware('auth.kelas')->middleware('kelas.open'); //Attend a kelas for given id
+        Route::get('/{kelas_id}/attend/status', 'API\AttendanceController@getStatusAttend')->middleware('auth.kelas'); //Get user's kelas attendance status for given id (attended/not-attended)
 
         Route::get('/{kelas_id}/file', 'API\KelasController@Getkelas'); //Get all file uploaded in kelas for given id
         Route::post('/{kelas_id}/file', 'API\KelasController@Getkelas'); //Upload file in kelas for given id
@@ -39,7 +39,3 @@ Route::fallback(function(){
     return response()->json([
         'message' => 'Page Not Found.'], 404);
 });
-
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
