@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\KelasRequest;
 use App\Kelas;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\View;
 
 class KelasController extends Controller
 {
@@ -22,29 +21,30 @@ class KelasController extends Controller
         });
     }
 
-    //This init function checks whether the user has access to that class
-    public function init($kelas)
-    {
-        //Check if user have access by using a function isInKelas
-        if (!$this->isInKelas($kelas->id)) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
-        return NULL;
-    }
-
-    //This function checks whether the user has access in kelas
-    private function isInKelas($kelas_id){
-        if (Kelas::find($kelas_id)->hasUser($this->user))
-            return true;
-        return false;
-    }
-
     //This function will returns all kelas data that the user has enrolled
     public function getAllKelas()
     {
-        return $this->user;
         $kelas = $this->user->kelas;
+        return response()->json(['success' => $kelas], $this->successStatus);
+    }
+
+    /* 
+    This function will return a kelas data with the given id. 
+
+    Rules : 
+        The given kelas_id must be in database.
+        User must be enrolled in the kelas.
+
+    Return :
+         Kelas data.
+    */
+    public function getOneKelas($kelas_id)
+    {
+        if (!Kelas::findOrFail($kelas_id)->hasUser($this->user)) 
+            return response()->json(['error' => 'Unauthorized'], 403);
+        
+        $kelas = Kelas::findOrFail($kelas_id);
+
         return response()->json(['success' => $kelas], $this->successStatus);
     }
 
@@ -68,35 +68,7 @@ class KelasController extends Controller
         }
 
         $kelas = new Kelas();
-        $kelas->name = $request->name;
-        $kelas->day = $request->day;
-        $kelas->time_start = $request->time_start;
-        $kelas->time_end = $request->time_end;
-        $kelas->owner = $this->user->id;
-        $kelas->save();
-
-        $kelas->user()->attach($this->user);
-
-        return response()->json(['success' => $kelas], $this->successStatus);
-    }
-
-    /* 
-    This function will return a kelas data with the given id. 
-
-    Rules : 
-        The given kelas_id must be in database.
-        User must be enrolled in the kelas.
-
-    Return :
-        Kelas data.
-    */
-    public function getOneKelas($kelas_id)
-    {
-        $kelas = Kelas::findOrFail($kelas_id);
-
-        if (!$kelas->hasUser($this->user)) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+        $kelas->customCreate($request, $this->user);
 
         return response()->json(['success' => $kelas], $this->successStatus);
     }
@@ -109,39 +81,18 @@ class KelasController extends Controller
         Only the owner of the kelas that can update.
 
     Return :
-        Updated kelas data
+        Updated kelas data.
     */
     public function putUpdateKelas(KelasRequest $request, $kelas_id)
     {
         $kelas = Kelas::findOrFail($kelas_id);
-        
-        $check = $this->init($this->user, $kelas);
-        if ($check) {
-            return $check;
-        }
 
-        //Check the owner of the given kelas.
-        if ($kelas->owner != $this->user->id) {
+        if (!$kelas->hasUser($this->user) || $kelas->owner != $this->user->id) 
             return response()->json(['error' => 'Unauthorized'], 403);
-        }
 
-        // $kelas->update($request->all());
-        // $kelas->update(['time_start' => $request->time_start]);
+        $kelas = Kelas::findOrFail($kelas_id);
 
-        if ($request->name != NULL)
-            $kelas->name = $request->name;
-        if ($request->day != NULL)
-            $kelas->day = $request->day;
-        if ($request->time_start != NULL)
-            $kelas->time_start = $request->time_start;
-        if ($request->time_end != NULL) {
-            if ($request->time_end <= $kelas->time_start) {
-                return response()->json(['error' => "time_end must bigger than time_start", 'time_start' => $kelas->time_start, 'time_end' => $request->time_end], 401);
-            }
-            $kelas->time_end = $request->time_end;
-        }
-        $kelas->update();
-
+        $kelas->customUpdate($request, $this->user);
         return response()->json(['success' => $kelas], $this->successStatus);
     }
     
@@ -158,17 +109,11 @@ class KelasController extends Controller
     public function deleteOneKelas($kelas_id)
     {
         $kelas = Kelas::findOrFail($kelas_id);
-        
-        $check = $this->init($this->user, $kelas);
-        if ($check) {
-            return $check;
-        }
 
-        if ($kelas->owner != $this->user->id) {
+        if (!$kelas->hasUser($this->user) || $kelas->owner != $this->user->id) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $kelas->user()->detach();
         $kelas->delete();
 
         return response()->json(['success' => "Delete success"], $this->successStatus);
