@@ -9,59 +9,42 @@ use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
 {
-    public $successStatus = 200;
+    private $successStatus = 200;
+    private $unauthorize = "Unauthorized";
+    private $attendMessage = "You have attended in this class";
+    private $notAttendMessage = "You haven't attended in this class";
+    private $kelasNotOpen = "Kelas hasn't opened yet";
 
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
             $this->user = Auth::user();
+            $this->attendance = Attendance::where('user_id', $this->user->id)->where('kelas_id', $request->kelas_id)->orderBy('created_at', 'DESC')->get();
+            $this->kelas = Kelas::findOrFail($request->kelas_id);
+            if (!$this->kelas->hasUser($this->user)) 
+                return response()->json(['error' => $this->unauthorize], 403);
 
             return $next($request);
         });
-
-        return "asd";
     }
 
-    private function userAttendanceList($kelas_id){
-        $attendance = Attendance::where('user_id', $this->user->id)
-                                ->where('kelas_id', $kelas_id)
-                                ->get();
-        return $attendance;
+    public function getAllAttend(){
+        return response()->json(['success' => $this->attendance], $this->successStatus);
     }
 
-    public function getAllAttend($kelas_id){
-        if (!Kelas::findOrFail($kelas_id)->hasUser($this->user)) 
-            return response()->json(['error' => 'Unauthorized'], 403);
-
-        $attendance = $this->userAttendanceList($kelas_id);
-
-        return response()->json(['success' => $attendance], $this->successStatus);
-    }
-
-    public function getStatusAttend($kelas_id){
-        $kelas = Kelas::findOrFail($kelas_id);
-        
-        if (!Kelas::findOrFail($kelas_id)->hasUser($this->user)) 
-            return response()->json(['error' => 'Unauthorized'], 403);
-
-        $attendance = $this->userAttendanceList($kelas_id)[0];
-        if ($attendance && $attendance->alreadyAttended($kelas, $attendance)) {
-            return response()->json(['success' => "You have attended in this class"], $this->successStatus);
+    public function getStatusAttend(){
+        $attendance = $this->attendance[0];
+        if ($attendance && $attendance->alreadyAttended($this->kelas, $attendance)) {
+            return response()->json(['success' => $this->attendMessage], $this->successStatus);
         }
             
-        return response()->json(['success' => "You haven't attended in this class"], $this->successStatus);
+        return response()->json(['success' => $this->notAttendMessage], $this->successStatus);
     }
 
     public function postCreateAttend($kelas_id){
-        $kelas = Kelas::findOrFail($kelas_id);
-
-        if (!Kelas::findOrFail($kelas_id)->hasUser($this->user)) 
-            return response()->json(['error' => 'Unauthorized'], 403);
-
-        if ($kelas->isOpen()) {
-            $attendance = $this->userAttendanceList($kelas_id)[0];
-            if ($attendance && $attendance->alreadyAttended($kelas, $attendance)) {
-                return response()->json(['error' => "You have attended in this class"], $this->successStatus);
+        if ($this->kelas->isOpen()) {
+            if ($this->getStatusAttend() == response()->json(['success' => $this->attendMessage], $this->successStatus)) {
+                return response()->json(['error' => $this->attendMessage], $this->successStatus);
             }
 
             $attendance = new Attendance();
@@ -70,7 +53,7 @@ class AttendanceController extends Controller
             return response()->json(['success' => $attendance], $this->successStatus);
         } 
 
-        return response()->json(['error' => "Kelas hasn't opened yet"], 403);
+        return response()->json(['error' => $this->kelasNotOpen], 403);
     }
 
 }
