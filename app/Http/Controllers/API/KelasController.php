@@ -7,27 +7,55 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\KelasRequest;
 use Illuminate\Support\Facades\Auth;
 
-class KelasController extends Controller
-{
-    //Initialize success status code
+class KelasController extends Controller{
     private $successStatus = 200;
+    private $deleteMessage = "Delete success";
+    private $kelasStatusOpenMessage = "Kelas has been opened";
+    private $kelasStatusCloseMessage = "Kelas is close yet";
 
-    public function __construct()
-    {
+    public function __construct(){
         $this->middleware(function ($request, $next) {
             $this->user = Auth::user();
-
             return $next($request);
         });
     }
 
-    //This function will returns all kelas data that the user has enrolled
-    public function getAllKelas()
-    {
-        $kelas = $this->user->kelas;
+    public function getAllKelas(){
+        return response()->json(['success' => $this->user->kelas], $this->successStatus);
+    }
+
+    public function getOneKelas($kelas_id){
+        return response()->json(['success' => Kelas::findOrFail($kelas_id)], $this->successStatus);
+    }
+
+    public function postCreateKelas(KelasRequest $request){
+        $kelas = new Kelas();
+        $kelas->customCreate($request, $this->user);
         return response()->json(['success' => $kelas], $this->successStatus);
     }
 
+    public function putUpdateKelas(KelasRequest $request, $kelas_id){
+        $kelas = Kelas::findOrFail($kelas_id);
+        $kelas->customUpdate($request, $this->user);
+        return response()->json(['success' => $kelas], $this->successStatus);
+    }
+
+    public function deleteOneKelas($kelas_id){
+        Kelas::findOrFail($kelas_id)->delete();
+        return response()->json(['success' => $this->deleteMessage], $this->successStatus);
+    }
+
+    public function getStatusKelas($kelas_id){
+        if (Kelas::findOrFail($kelas_id)->isOpen()) {
+            return response()->json(['success' => $this->kelasStatusOpenMessage], $this->successStatus);
+        } else {
+            return response()->json(['success' => $this->kelasStatusCloseMessage], $this->successStatus);
+        }
+    }
+}
+
+    //Initialize success status code
+    //This function will returns all kelas data that the user has enrolled
     /* 
     This function will return a kelas data with the given id. 
 
@@ -38,17 +66,7 @@ class KelasController extends Controller
     Return :
          Kelas data.
     */
-    public function getOneKelas($kelas_id)
-    {
-        if (!Kelas::findOrFail($kelas_id)->hasUser($this->user)) 
-            return response()->json(['error' => 'Unauthorized'], 403);
-        
-        $kelas = Kelas::findOrFail($kelas_id);
-
-        return response()->json(['success' => $kelas], $this->successStatus);
-    }
-
-    /*
+        /*
     This function creates a kelas with 4 form data, which is :
         name : a string with value of the kelas's name, max 255 characters.
         day : the day the kelas take palce, integer value between 0-6 (0 : Sunday, 1 : Monday, ... , 6 : Saturday).
@@ -60,20 +78,9 @@ class KelasController extends Controller
 
     Return : kelas data that has been created.
     */
-    public function postCreateKelas(KelasRequest $request)
-    {
         //Check if user is a teacher
-        if ($this->user->user_type != 'T') {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
 
-        $kelas = new Kelas();
-        $kelas->customCreate($request, $this->user);
-
-        return response()->json(['success' => $kelas], $this->successStatus);
-    }
-
-    /* 
+        /* 
     This function will update the kelas data with the given id. 
 
     Rules : 
@@ -83,20 +90,7 @@ class KelasController extends Controller
     Return :
         Updated kelas data.
     */
-    public function putUpdateKelas(KelasRequest $request, $kelas_id)
-    {
-        $kelas = Kelas::findOrFail($kelas_id);
-
-        if (!$kelas->hasUser($this->user) || $kelas->owner != $this->user->id) 
-            return response()->json(['error' => 'Unauthorized'], 403);
-
-        $kelas = Kelas::findOrFail($kelas_id);
-
-        $kelas->customUpdate($request, $this->user);
-        return response()->json(['success' => $kelas], $this->successStatus);
-    }
-    
-    /* 
+        /* 
     This function will delete the kelas data with the given id. 
 
     Rules : 
@@ -106,26 +100,3 @@ class KelasController extends Controller
     Return :
         String = "Delete Success"
     */
-    public function deleteOneKelas($kelas_id)
-    {
-        $kelas = Kelas::findOrFail($kelas_id);
-
-        if (!$kelas->hasUser($this->user) || $kelas->owner != $this->user->id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
-        $kelas->delete();
-
-        return response()->json(['success' => "Delete success"], $this->successStatus);
-    }
-
-    public function getStatusKelas($kelas_id){
-        $kelas = Kelas::findOrFail($kelas_id);
-
-        if ($kelas->isOpen()) {
-            return response()->json(['success' => "open"], $this->successStatus);
-        } else {
-            return response()->json(['success' => "close"], $this->successStatus);
-        }
-    }
-}

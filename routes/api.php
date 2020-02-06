@@ -13,13 +13,13 @@ Route::group(['middleware' => 'auth:api'], function(){ //Only authenticated user
 
     Route::prefix('/kelas')->group(function () { //Grouping kelas paths
         Route::get('/', 'API\KelasController@getAllKelas'); //Get all user's Kelas
-        Route::post('/', 'API\KelasController@postCreateKelas'); //Create a new Kelas
+        Route::post('/', 'API\KelasController@postCreateKelas')->middleware('auth.teacher'); //Create a new Kelas
 
-        Route::get('/{kelas_id}', 'API\KelasController@getOneKelas'); //Get kelas for given id
-        Route::put('/{kelas_id}', 'API\KelasController@putUpdateKelas'); //Update kelas for given id
-        Route::delete('/{kelas_id}', 'API\KelasController@deleteOneKelas'); //Delete kelas for given id
-        Route::get('/{kelas_id}/status', 'API\KelasController@getStatusKelas'); //Get kelas status (open/close)
-        
+        Route::get('/{kelas_id}', 'API\KelasController@getOneKelas')->middleware('auth.kelas'); //Get kelas for given id
+        Route::put('/{kelas_id}', 'API\KelasController@putUpdateKelas')->middleware('auth.kelas')->middleware('auth.teacher')->middleware('auth.owner'); //Update kelas for given id
+        Route::delete('/{kelas_id}', 'API\KelasController@deleteOneKelas')->middleware('auth.kelas')->middleware('auth.teacher')->middleware('auth.owner'); //Delete kelas for given id
+        Route::get('/{kelas_id}/status', 'API\KelasController@getStatusKelas')->middleware('auth.kelas'); //Get kelas status (open/close)
+
         Route::get('/{kelas_id}/attend', 'API\AttendanceController@getAllAttend'); //Get all attend in kelas for given id
         Route::post('/{kelas_id}/attend', 'API\AttendanceController@postCreateAttend'); //Attend a kelas for given id
         Route::get('/{kelas_id}/attend/status', 'API\AttendanceController@getStatusAttend'); //Get user's kelas attendance status for given id (attended/not-attended)
