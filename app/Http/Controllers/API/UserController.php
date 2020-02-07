@@ -38,6 +38,10 @@ class UserController extends Controller
     public function getDetailUser($user_id){
         return response()->json(['success' => User::find($user_id)], $this->successStatus);
     }
+    
+    public function getAllKelasUser($user_id){
+        return response()->json(['success' => User::find($user_id)->kelas], $this->successStatus);
+    }
 
     public function getDetailsLoginUser(){
         return response()->json(['success' => Auth::user()], $this->successStatus);
@@ -48,4 +52,6 @@ class UserController extends Controller
         Auth::user()->OauthAcessToken()->delete();
         return response()->json(['success'=>'logout success'], $this->successStatus);
     }
+
+
 }

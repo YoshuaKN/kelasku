@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\User;
 use App\Kelas;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\KelasRequest;

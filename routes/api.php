@@ -7,8 +7,7 @@
         4. LIHAT DAFTAR ORANG DALAM SATU KELAS @Route V
         5. GURU LIHAT DAFTAR HADIR TIAP SISWA  @Route V
         6. ENROLL DALAM KELAS @Route V
-        7. LIHAT SATU ORANG @Route
-        8. GET KELAS DARI USER TERTENTU @Route 
+        7. GET KELAS DARI USER TERTENTU @Route V
 */
 
 Route::post('login', 'API\UserController@login'); //Login
@@ -21,12 +20,12 @@ Route::group(['middleware' => 'auth:api'], function(){ //Only authenticated user
     Route::prefix('/user')->group(function () { //Grouping user paths
         Route::get('/', 'API\UserController@getDetailsLoginUser'); //Get detail from login user
         Route::get('/{user_id}', 'API\UserController@getDetailUser'); //Get detail from login user
+        Route::get('/{user_id}/kelas', 'API\UserController@getAllKelasUser'); 
     });
 
     Route::prefix('/kelas')->group(function () { //Grouping kelas paths
         Route::get('/', 'API\KelasController@getAllKelas'); //Get all user's Kelas
         Route::post('/', 'API\KelasController@postCreateKelas')->middleware('auth.teacher'); //Create a new Kelas
-        Route::get('/{user_id}', 'API\KelasController@getAllUserKelas'); 
 
         Route::get('/{kelas_id}', 'API\KelasController@getOneKelas')->middleware('auth.kelas'); //Get kelas for given id
         Route::put('/{kelas_id}', 'API\KelasController@putUpdateKelas')->middleware('auth.kelas')->middleware('auth.teacher')->middleware('auth.owner'); //Update kelas for given id
