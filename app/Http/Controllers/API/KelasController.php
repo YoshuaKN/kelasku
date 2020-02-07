@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Auth;
 class KelasController extends Controller{
     private $successStatus = 200;
     private $deleteMessage = "Delete success";
+    private $enrollMessage = "Enroll success";
     private $kelasStatusOpenMessage = "Kelas has been opened";
-    private $kelasStatusCloseMessage = "Kelas is close yet";
 
     public function __construct(){
         $this->middleware(function ($request, $next) {
@@ -45,12 +45,19 @@ class KelasController extends Controller{
         return response()->json(['success' => $this->deleteMessage], $this->successStatus);
     }
 
-    public function getStatusKelas($kelas_id){
-        if (Kelas::findOrFail($kelas_id)->isOpen()) {
-            return response()->json(['success' => $this->kelasStatusOpenMessage], $this->successStatus);
-        } else {
-            return response()->json(['success' => $this->kelasStatusCloseMessage], $this->successStatus);
-        }
+    public function getStatusKelas(){
+        return response()->json(['success' => $this->kelasStatusOpenMessage], $this->successStatus);
+    }
+
+    public function getUsersKelas($kelas_id){
+        $kelas = Kelas::findOrFail($kelas_id);
+        return response()->json(['success' => $kelas->user], $this->successStatus);
+    }
+
+    public function postEnrollKelas($kelas_id){
+        $kelas = Kelas::findOrFail($kelas_id);
+        $kelas->user()->attach($this->user);
+        return response()->json(['success' => $this->enrollMessage], $this->successStatus);
     }
 }
 

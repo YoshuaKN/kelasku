@@ -1,4 +1,13 @@
 <?php
+/*
+    FITUR BELUM JADI :
+        1. MATERI / TUGAS TIAP KELAS
+        2. UPLOAD FILE GURU (BISA DILIHAT SEMUA ORANG YANG BERADA DI KELAS TERSEBUT)
+        3. UPLOAD FILE SISWA (UNTUK MENGIRIMKAN TUGAS KE GURU DAN HANYA DAPAT DILIHAT OLEH GURU DAN SISWA PENGIRIM)
+        4. LIHAT DAFTAR ORANG DALAM SATU KELAS @Route
+        5. GURU LIHAT DAFTAR HADIR TIAP SISWA 
+        6. ENROLL DALAM KELAS @Route
+*/
 
 Route::post('login', 'API\UserController@login'); //Login
 Route::post('register', 'API\UserController@register'); //Register
@@ -8,7 +17,8 @@ Route::group(['middleware' => 'auth:api'], function(){ //Only authenticated user
     Route::post('logout','API\UserController@logout'); //Logout
 
     Route::prefix('/user')->group(function () { //Grouping user paths
-        Route::post('details', 'API\UserController@details'); //Get detail from login user
+        Route::get('/', 'API\UserController@getDetailsLoginUser'); //Get detail from login user
+        Route::get('/{user_id}', 'API\UserController@getDetailUser'); //Get detail from login user
     });
 
     Route::prefix('/kelas')->group(function () { //Grouping kelas paths
@@ -18,7 +28,9 @@ Route::group(['middleware' => 'auth:api'], function(){ //Only authenticated user
         Route::get('/{kelas_id}', 'API\KelasController@getOneKelas')->middleware('auth.kelas'); //Get kelas for given id
         Route::put('/{kelas_id}', 'API\KelasController@putUpdateKelas')->middleware('auth.kelas')->middleware('auth.teacher')->middleware('auth.owner'); //Update kelas for given id
         Route::delete('/{kelas_id}', 'API\KelasController@deleteOneKelas')->middleware('auth.kelas')->middleware('auth.teacher')->middleware('auth.owner'); //Delete kelas for given id
-        Route::get('/{kelas_id}/status', 'API\KelasController@getStatusKelas')->middleware('auth.kelas'); //Get kelas status (open/close)
+        Route::get('/{kelas_id}/status', 'API\KelasController@getStatusKelas')->middleware('auth.kelas')->middleware('kelas.open'); //Get kelas status (open/close)
+        Route::post('{kelas_id}/enroll', 'API\KelasController@postEnrollKelas')->middleware('auth.enroll');
+        Route::get('{kelas_id}/users', 'API\KelasController@getUsersKelas')->middleware('auth.kelas');
 
         Route::get('/{kelas_id}/attend', 'API\AttendanceController@getAllAttend')->middleware('auth.kelas'); //Get all attend in kelas for given id
         Route::post('/{kelas_id}/attend', 'API\AttendanceController@postCreateAttend')->middleware('auth.kelas')->middleware('kelas.open'); //Attend a kelas for given id
@@ -39,3 +51,4 @@ Route::fallback(function(){
     return response()->json([
         'message' => 'Page Not Found.'], 404);
 });
+
