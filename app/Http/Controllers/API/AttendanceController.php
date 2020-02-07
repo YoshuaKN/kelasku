@@ -18,7 +18,6 @@ class AttendanceController extends Controller
         $this->middleware(function ($request, $next) {
             $this->user = Auth::user();
             $this->attendance = Attendance::where('user_id', $this->user->id)->where('course_id', $request->kelas_id)->orderBy('created_at', 'DESC')->get();
-            $this->kelas = Kelas::findOrFail($request->kelas_id);
             return $next($request);
         });
     }
@@ -28,7 +27,7 @@ class AttendanceController extends Controller
     }
 
     public function postCreateAttend($kelas_id){
-        if ($this->getStatusAttend() == response()->json(['success' => $this->attendMessage], $this->successStatus)) {
+        if ($this->getStatusAttend($kelas_id) == response()->json(['success' => $this->attendMessage], $this->successStatus)) {
             return response()->json(['error' => $this->attendMessage], $this->successStatus);
         }
         $attendance = new Attendance();
@@ -36,9 +35,9 @@ class AttendanceController extends Controller
         return response()->json(['success' => $attendance], $this->successStatus);
     }
 
-    public function getStatusAttend(){
+    public function getStatusAttend($kelas_id){
         $attendance = $this->attendance[0];
-        if ($attendance && $attendance->alreadyAttended($this->kelas, $attendance))
+        if ($attendance && $attendance->alreadyAttended(Kelas::findOrFail($kelas_id), $attendance))
             return response()->json(['success' => $this->attendMessage], $this->successStatus);  
         return response()->json(['success' => $this->notAttendMessage], $this->successStatus);
     }

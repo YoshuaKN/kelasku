@@ -40,8 +40,11 @@ Route::group(['middleware' => 'auth:api'], function(){ //Only authenticated user
         Route::get('/{kelas_id}/attend/status', 'API\AttendanceController@getStatusAttend')->middleware('auth.kelas'); //Get user's kelas attendance status for given id (attended/not-attended)
         Route::get('/{kelas_id}/attend/users', 'API\AttendanceController@getAllUsersAttend')->middleware('auth.kelas')->middleware('auth.teacher'); //Get user's kelas attendance status for given id (attended/not-attended)
 
-        Route::get('/{kelas_id}/material', 'API\KelasController@getAllMaterials')->middleware('auth.kelas'); //Get all material in kelas for given id
-        Route::post('/{kelas_id}/material', 'API\KelasController@postCreateMaterial')->middleware('auth.kelas')->middleware('auth.teacher'); //Create new material in kelas for given id
+        Route::get('/{kelas_id}/material', 'API\MaterialController@getAllMaterials')->middleware('auth.kelas'); //Get all material in kelas for given id
+        Route::post('/{kelas_id}/material', 'API\MaterialController@postCreateMaterial')->middleware('auth.kelas')->middleware('auth.teacher'); //Create new material in kelas for given id
+        Route::get('/{kelas_id}/material/{material_id}', 'API\MaterialController@getOneMaterial')->middleware('auth.kelas')->middleware('kelas.material');
+        Route::put('/{kelas_id}/material/{material_id}', 'API\MaterialController@putUpdateMaterial')->middleware('auth.kelas')->middleware('auth.teacher')->middleware('auth.owner'); 
+        Route::delete('/{kelas_id}/material/{material_id}', 'API\MaterialController@deleteOneMaterial')->middleware('auth.kelas')->middleware('auth.teacher')->middleware('auth.owner'); 
 
         //NOT DONE
         Route::get('/{kelas_id}/file', 'API\KelasController@Getkelas'); //Get all file uploaded in kelas for given id

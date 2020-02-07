@@ -67,6 +67,7 @@ class Kernel extends HttpKernel
         'auth.enroll' =>\App\Http\Middleware\EnrollCourseMiddleware::class,
         'auth.owner' =>\App\Http\Middleware\OwnerAuthMiddleware::class,
         'kelas.open' =>\App\Http\Middleware\KelasOpenMiddleware::class,
+        'kelas.material' =>\App\Http\Middleware\KelasMaterialMiddleware::class,
     ];
 
     /**
