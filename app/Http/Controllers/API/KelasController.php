@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Auth;
 class KelasController extends Controller{
     private $successStatus = 200;
     private $createKelasMessage = "Create kelas success";
-    private $deleteMessage = "Delete success";
+    private $deleteKelasMessage = "Delete kelas success";
+    private $updateKelasessage = "Update kelas success";
     private $enrollMessage = "Enroll success";
     private $kelasStatusOpenMessage = "Kelas has been opened";
 
@@ -39,12 +40,12 @@ class KelasController extends Controller{
     public function putUpdateKelas(KelasRequest $request, $kelas_id){
         $kelas = Kelas::findOrFail($kelas_id);
         $kelas->customUpdate($request, $this->user);
-        return response()->json(['success' => $kelas], $this->successStatus);
+        return response()->json(['success' => $this->updateKelasessage], $this->successStatus);
     }
 
     public function deleteOneKelas($kelas_id){
         Kelas::findOrFail($kelas_id)->delete();
-        return response()->json(['success' => $this->deleteMessage], $this->successStatus);
+        return response()->json(['success' => $this->deleteKelasMessage], $this->successStatus);
     }
 
     public function getStatusKelas(){

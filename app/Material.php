@@ -21,6 +21,12 @@ class Material extends Model
         $this->save();
     }
 
+    public function customUpdate($request){
+        $this->name = $request->name;
+        $this->description = $request->description;
+        $this->update();
+    }
+
     public function course() {
         return $this->belongsTo(Kelas::class);
     }
