@@ -27,13 +27,6 @@ class AttendanceController extends Controller
         return response()->json(['success' => $this->attendance], $this->successStatus);
     }
 
-    public function getStatusAttend(){
-        $attendance = $this->attendance[0];
-        if ($attendance && $attendance->alreadyAttended($this->kelas, $attendance))
-            return response()->json(['success' => $this->attendMessage], $this->successStatus);  
-        return response()->json(['success' => $this->notAttendMessage], $this->successStatus);
-    }
-
     public function postCreateAttend($kelas_id){
         if ($this->getStatusAttend() == response()->json(['success' => $this->attendMessage], $this->successStatus)) {
             return response()->json(['error' => $this->attendMessage], $this->successStatus);
@@ -41,6 +34,18 @@ class AttendanceController extends Controller
         $attendance = new Attendance();
         $attendance->customCreate($this->user->id, $kelas_id);
         return response()->json(['success' => $attendance], $this->successStatus);
-}
+    }
+
+    public function getStatusAttend(){
+        $attendance = $this->attendance[0];
+        if ($attendance && $attendance->alreadyAttended($this->kelas, $attendance))
+            return response()->json(['success' => $this->attendMessage], $this->successStatus);  
+        return response()->json(['success' => $this->notAttendMessage], $this->successStatus);
+    }
+
+    public function getAllUsersAttend($kelas_id){
+        $attendance = Attendance::where('kelas_id', $kelas_id)->where('created_at', '>', now()->subdays(6))->orderBy('created_at', 'DESC')->get();
+        return response()->json(['success' => $attendance], $this->successStatus);
+    }
 
 }
