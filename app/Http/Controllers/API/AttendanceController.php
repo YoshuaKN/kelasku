@@ -17,7 +17,7 @@ class AttendanceController extends Controller
     {
         $this->middleware(function ($request, $next) {
             $this->user = Auth::user();
-            $this->attendance = Attendance::where('user_id', $this->user->id)->where('kelas_id', $request->kelas_id)->orderBy('created_at', 'DESC')->get();
+            $this->attendance = Attendance::where('user_id', $this->user->id)->where('course_id', $request->kelas_id)->orderBy('created_at', 'DESC')->get();
             $this->kelas = Kelas::findOrFail($request->kelas_id);
             return $next($request);
         });
@@ -44,7 +44,7 @@ class AttendanceController extends Controller
     }
 
     public function getAllUsersAttend($kelas_id){
-        $attendance = Attendance::where('kelas_id', $kelas_id)->where('created_at', '>', now()->subdays(6))->orderBy('created_at', 'DESC')->get();
+        $attendance = Attendance::where('course_id', $kelas_id)->where('created_at', '>', now()->subdays(6))->orderBy('created_at', 'DESC')->get();
         return response()->json(['success' => $attendance], $this->successStatus);
     }
 

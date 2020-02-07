@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class KelasController extends Controller{
     private $successStatus = 200;
+    private $createKelasMessage = "Create kelas success";
     private $deleteMessage = "Delete success";
     private $enrollMessage = "Enroll success";
     private $kelasStatusOpenMessage = "Kelas has been opened";
@@ -32,7 +33,7 @@ class KelasController extends Controller{
     public function postCreateKelas(KelasRequest $request){
         $kelas = new Kelas();
         $kelas->customCreate($request, $this->user);
-        return response()->json(['success' => $kelas], $this->successStatus);
+        return response()->json(['success' => $this->createKelasMessage], $this->successStatus);
     }
 
     public function putUpdateKelas(KelasRequest $request, $kelas_id){

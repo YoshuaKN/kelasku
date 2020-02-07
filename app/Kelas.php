@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Kelas extends Model
 {
-    protected $table = "kelas";
+    protected $table = "course";
     protected $primaryKey = 'id';
     protected $fillable = [
         'name',
@@ -25,7 +25,7 @@ class Kelas extends Model
         $this->save();
     }
 
-    public function customUpdate($request, $user){
+    public function customUpdate($request){
         $this->name = $request->name;
         $this->day = $request->day;
         $this->time_start = $request->time_start;
@@ -46,11 +46,15 @@ class Kelas extends Model
     }
 
     public function user(){
-        return $this->belongsToMany(User::class, "user_kelas", "kelas_id", "user_id");
+        return $this->belongsToMany(User::class, "user_course", "course_id", "user_id");
     }
 
     public function attendance() {
         return $this->hasMany(Attendance::class);
+    }
+
+    public function material() {
+        return $this->hasMany(Material::class);
     }
 
     public function hasUser($user){

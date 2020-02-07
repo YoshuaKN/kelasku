@@ -40,14 +40,12 @@ Route::group(['middleware' => 'auth:api'], function(){ //Only authenticated user
         Route::get('/{kelas_id}/attend/status', 'API\AttendanceController@getStatusAttend')->middleware('auth.kelas'); //Get user's kelas attendance status for given id (attended/not-attended)
         Route::get('/{kelas_id}/attend/users', 'API\AttendanceController@getAllUsersAttend')->middleware('auth.kelas')->middleware('auth.teacher'); //Get user's kelas attendance status for given id (attended/not-attended)
 
+        Route::get('/{kelas_id}/material', 'API\KelasController@getAllMaterials')->middleware('auth.kelas'); //Get all material in kelas for given id
+        Route::post('/{kelas_id}/material', 'API\KelasController@postCreateMaterial')->middleware('auth.kelas')->middleware('auth.teacher'); //Create new material in kelas for given id
+
+        //NOT DONE
         Route::get('/{kelas_id}/file', 'API\KelasController@Getkelas'); //Get all file uploaded in kelas for given id
         Route::post('/{kelas_id}/file', 'API\KelasController@Getkelas'); //Upload file in kelas for given id
-
-        //Fitur tambahan
-        Route::get('/{kelas_id}/homework', 'API\KelasController@Getkelas'); //Get all homework in kelas for given id
-        Route::post('/{kelas_id}/homework', 'API\KelasController@Getkelas'); //Create new homework in kelas for given id
-        Route::get('/{kelas_id}/homework/{homework_id}', 'API\KelasController@Getkelas'); //Get all file uploaded in kelas for given id
-
     }); 
 });
 
