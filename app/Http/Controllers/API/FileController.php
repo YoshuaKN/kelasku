@@ -35,9 +35,7 @@ class FileController extends Controller
     }
 
     public function deleteOneFile(Request $request){
-        $file = File::find($request->file_id);
-        Storage::delete($file->path);
-        $file->delete();
+        File::find($request->file_id)->delete();
         return response()->json(['success' => $this->deleteFileMessage], $this->successStatus);
     }
 
