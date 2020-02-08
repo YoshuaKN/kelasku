@@ -2,11 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\File;
 use Closure;
-use App\Kelas;
-use Illuminate\Support\Facades\Auth;
 
-class KelasAuthMiddleware
+class FileShareableMiddleware
 {
     /**
      * Handle an incoming request.
@@ -17,8 +16,8 @@ class KelasAuthMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (!Kelas::findOrFail($request->kelas_id)->hasUser(Auth::user()))
-            return response()->json(['error' => 'You are not in this course, please enroll before you can access this class'], 403);
+        if (!File::find($request->file_id)->shareable) 
+            return response()->json(['error' => 'This file is not shareable'], 403);
 
         return $next($request);
     }

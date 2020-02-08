@@ -30,14 +30,14 @@ class MaterialController extends Controller
         return response()->json(['success' => Material::find($material_id)], $this->successStatus);
     }
 
-    public function postCreateMaterial(MaterialRequest $request, $kelas_id){
+    public function postCreateMaterial(MaterialRequest $request){
         $material = new Material;
-        $material->customCreate($request, $kelas_id);
+        $material->customCreate($request, $request->kelas_id);
         return response()->json(['success' => $this->createMaterialMessage], $this->successStatus);
     }
 
-    public function putUpdateMaterial(MaterialRequest $request, $kelas_id, $material_id){
-        $material = Material::find($material_id);
+    public function putUpdateMaterial(MaterialRequest $request){
+        $material = Material::find($request->material_id);
         $material->customUpdate($request);
         return response()->json(['success' => $this->updateMaterialMessage], $this->successStatus);
     }

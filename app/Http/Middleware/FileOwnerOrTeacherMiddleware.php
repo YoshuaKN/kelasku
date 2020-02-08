@@ -2,11 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\File;
 use Closure;
-use App\Kelas;
 use Illuminate\Support\Facades\Auth;
 
-class KelasAuthMiddleware
+class FileOwnerOrTeacherMiddleware
 {
     /**
      * Handle an incoming request.
@@ -17,8 +17,9 @@ class KelasAuthMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (!Kelas::findOrFail($request->kelas_id)->hasUser(Auth::user()))
-            return response()->json(['error' => 'You are not in this course, please enroll before you can access this class'], 403);
+        $user = Auth::user();
+        if (File::find($request->file_id)->owner != $user->id || $user->user_type != 'T') 
+            return response()->json(['error' => 'Only the owner or teacher can access this method'], 403);
 
         return $next($request);
     }
