@@ -3,9 +3,9 @@
 namespace App\Providers;
 
 use App\File;
-use App\Kelas;
+use App\Course;
 use App\Observers\FileObserver;
-use App\Observers\KelasObserver;
+use App\Observers\CourseObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -27,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Kelas::observe(KelasObserver::class);
+        Course::observe(CourseObserver::class);
         File::observe(FileObserver::class);
     }
 }

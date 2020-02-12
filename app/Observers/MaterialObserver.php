@@ -36,7 +36,9 @@ class MaterialObserver
      */
     public function deleted(material $material)
     {
-        //
+        $material->file()->get()->each(function ($child) {
+            $child->delete();
+        });
     }
 
     /**

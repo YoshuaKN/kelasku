@@ -53,14 +53,14 @@ class FileController extends Controller
     }
 
     public function postUploadShareableFile(FileRequest $request){
-        $path = Storage::putFile('file/course_'.$request->kelas_id.'/material_'.$request->material_id.'/shareable', $request->file('file'));
+        $path = Storage::putFile('file/course_'.$request->course_id.'/material_'.$request->material_id.'/shareable', $request->file('file'));
         $file = new File();
         $file->customCreate($request, $this->user, $path, 1);
         return response()->json(['success' => $this->createFileMessage], $this->successStatus);
     }
 
     public function postUploadSubmitFile(FileRequest $request){
-        $path = Storage::putFile('file/course_'.$request->kelas_id.'/material_'.$request->material_id.'/submit', $request->file('file'));
+        $path = Storage::putFile('file/course_'.$request->course_id.'/material_'.$request->material_id.'/submit', $request->file('file'));
         $file = new File();
         $file->customCreate($request, $this->user, $path, 0);
         return response()->json(['success' => $this->createFileMessage], $this->successStatus);

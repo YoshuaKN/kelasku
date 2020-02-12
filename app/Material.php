@@ -28,6 +28,10 @@ class Material extends Model
     }
 
     public function course() {
-        return $this->belongsTo(Kelas::class);
+        return $this->belongsTo(Course::class);
+    }
+
+    public function file(){
+        return $this->hasMany(File::class);
     }
 }

@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use App\Kelas;
+use App\Course;
 use Closure;
 
-class KelasOpenMiddleware
+class CourseOpenMiddleware
 {
     /**
      * Handle an incoming request.
@@ -16,8 +16,8 @@ class KelasOpenMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (!Kelas::findOrFail($request->kelas_id)->isOpen()) {
-            return response()->json(['error' => "Kelas hasn't opened yet"], 403);
+        if (!Course::findOrFail($request->course_id)->isOpen()) {
+            return response()->json(['error' => "Course hasn't opened yet"], 403);
         }
         return $next($request);
     }

@@ -2,11 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Course;
+use App\Material;
 use Closure;
-use App\Kelas;
-use Illuminate\Support\Facades\Auth;
 
-class KelasAuthMiddleware
+class CourseMaterialMiddleware
 {
     /**
      * Handle an incoming request.
@@ -17,9 +17,9 @@ class KelasAuthMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (!Kelas::findOrFail($request->kelas_id)->hasUser(Auth::user()))
-            return response()->json(['error' => 'You are not in this course, please enroll before you can access this class'], 403);
-
+        if (Material::findOrFail($request->material_id)->course_id != Course::findOrfail($request->course_id)->id)
+            return response()->json(['error' => 'Material not found in this course'], 403);
+            
         return $next($request);
     }
 }

@@ -31,7 +31,7 @@ class User extends Authenticatable
     public function OauthAcessToken(){
         return $this->hasMany(OauthAccessToken::class);
     }
-    public function kelas() {
-        return $this->belongsToMany(Kelas::class, "user_course", "user_id", "course_id");
+    public function course() {
+        return $this->belongsToMany(Course::class, "user_course", "user_id", "course_id");
     }
 }

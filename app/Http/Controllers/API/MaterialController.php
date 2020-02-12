@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Material;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MaterialRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class MaterialController extends Controller
@@ -21,18 +22,21 @@ class MaterialController extends Controller
         });
     }
 
-    public function getAllMaterials($kelas_id){
-        return response()->json(['success' => Material::where('course_id', $kelas_id)->get()], $this->successStatus);
+    public function getAllMaterials($course_id){
+        return response()->json(['success' => Material::where('course_id', $course_id)->get()], $this->successStatus);
     }
 
-    //must include $kelas_id for $material_id get the actual material id
-    public function getOneMaterial($kelas_id, $material_id){
-        return response()->json(['success' => Material::find($material_id)], $this->successStatus);
+    public function getOneMaterial(Request $request){
+        // Material::find($request->material_id)->file->each(function ($child) {
+        //     return $child;
+        // });
+        // return Material::find($request->material_id)->file;
+        return response()->json(['success' => Material::find($request->material_id)], $this->successStatus);
     }
 
     public function postCreateMaterial(MaterialRequest $request){
         $material = new Material;
-        $material->customCreate($request, $request->kelas_id);
+        $material->customCreate($request, $request->course_id);
         return response()->json(['success' => $this->createMaterialMessage], $this->successStatus);
     }
 
@@ -42,8 +46,8 @@ class MaterialController extends Controller
         return response()->json(['success' => $this->updateMaterialMessage], $this->successStatus);
     }
 
-    public function deleteOneMaterial($kelas_id, $material_id){
-        Material::find($material_id)->delete();
+    public function deleteOneMaterial(Request $request){
+        Material::find($request->material_id)->delete();
         return response()->json(['success' => $this->deleteMaterialMessage], $this->successStatus);
     }
 }

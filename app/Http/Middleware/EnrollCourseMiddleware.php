@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Kelas;
+use App\Course;
 use Illuminate\Support\Facades\Auth;
 
 class EnrollCourseMiddleware
@@ -20,7 +20,7 @@ class EnrollCourseMiddleware
         if (Auth::user()->user_type != 'S') {
             return response()->json(['error' => 'Only student can access this method'], 403);
         }
-        if (Kelas::findOrfail($request->kelas_id)->hasUser(Auth::user())) {
+        if (Course::findOrfail($request->course_id)->hasUser(Auth::user())) {
             return response()->json(['error' => 'Already enroll this course'], $this->successStatus);
         }
 
