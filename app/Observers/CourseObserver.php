@@ -39,8 +39,11 @@ class CourseObserver
     public function deleted(Course $course)
     {
         $course->user()->detach();
-        $course->attendance()->get()->each(function ($child) {
-            $child->delete();
+        $course->attendance()->get()->each(function ($attendance) {
+            $attendance->delete();
+        });
+        $course->material()->get()->each(function ($material) {
+            $material->delete();
         });
     }
 

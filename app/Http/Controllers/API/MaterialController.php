@@ -47,6 +47,7 @@ class MaterialController extends Controller
     }
 
     public function deleteOneMaterial(Request $request){
+        // return Material::find($request->material_id)->file;
         Material::find($request->material_id)->delete();
         return response()->json(['success' => $this->deleteMaterialMessage], $this->successStatus);
     }

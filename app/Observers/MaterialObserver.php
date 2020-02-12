@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\material;
+use App\Material;
 
 class MaterialObserver
 {
@@ -12,7 +12,7 @@ class MaterialObserver
      * @param  \App\material  $material
      * @return void
      */
-    public function created(material $material)
+    public function created(Material $material)
     {
         //
     }
@@ -23,7 +23,7 @@ class MaterialObserver
      * @param  \App\material  $material
      * @return void
      */
-    public function updated(material $material)
+    public function updated(Material $material)
     {
         //
     }
@@ -34,10 +34,10 @@ class MaterialObserver
      * @param  \App\material  $material
      * @return void
      */
-    public function deleted(material $material)
+    public function deleted(Material $material)
     {
-        $material->file()->get()->each(function ($child) {
-            $child->delete();
+        $material->file()->get()->each(function ($file) {
+            $file->delete();
         });
     }
 
@@ -47,7 +47,7 @@ class MaterialObserver
      * @param  \App\material  $material
      * @return void
      */
-    public function restored(material $material)
+    public function restored(Material $material)
     {
         //
     }
@@ -58,7 +58,7 @@ class MaterialObserver
      * @param  \App\material  $material
      * @return void
      */
-    public function forceDeleted(material $material)
+    public function forceDeleted(Material $material)
     {
         //
     }

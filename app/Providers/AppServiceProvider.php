@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\File;
 use App\Course;
+use App\Material;
 use App\Observers\FileObserver;
 use App\Observers\CourseObserver;
+use App\Observers\MaterialObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -27,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Material::observe(MaterialObserver::class);
         Course::observe(CourseObserver::class);
         File::observe(FileObserver::class);
     }
