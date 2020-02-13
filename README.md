@@ -32,12 +32,18 @@
 ## Create Course
 ### Done
 ## Update Course
+### Done
 ## Delete Course
 ## Get All Users In Course
+### Done ???
 ## Get Course Status
+### Done
 ## Attend A Course
+### Done
 ## Get All Attends From A Course
+### Done
 ## Get User Attend Statuses Now
+### Done
 ## Get All Attends Status In Course
 ## Get All Materials In A Course
 ## Create A Material

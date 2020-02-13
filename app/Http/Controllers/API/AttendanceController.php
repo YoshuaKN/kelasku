@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Auth;
 class AttendanceController extends Controller
 {
     private $successStatus = 200;
-    private $attendMessage = "You have attended in this class";
+    private $attendMessage = "Success attend";
+    private $alreadyAttendMessage = "You have attended in this class";
     private $notAttendMessage = "You haven't attended in this class";
 
     public function __construct()
@@ -27,18 +28,17 @@ class AttendanceController extends Controller
     }
 
     public function postCreateAttend($course_id){
-        if ($this->getStatusAttend($course_id) == response()->json(['success' => $this->attendMessage], $this->successStatus)) {
-            return response()->json(['error' => $this->attendMessage], $this->successStatus);
+        if ($this->getStatusAttend($course_id) == response()->json(['success' => $this->alreadyAttendMessage], $this->successStatus)) {
+            return response()->json(['error' => $this->alreadyAttendMessage], $this->successStatus);
         }
         $attendance = new Attendance();
         $attendance->customCreate($this->user->id, $course_id);
-        return response()->json(['success' => $attendance], $this->successStatus);
+        return response()->json(['success' => $this->attendMessage], $this->successStatus);
     }
 
     public function getStatusAttend($course_id){
-        $attendance = $this->attendance[0];
-        if ($attendance && $attendance->alreadyAttended(Course::findOrFail($course_id), $attendance))
-            return response()->json(['success' => $this->attendMessage], $this->successStatus);  
+        if ($this->attendance->count() != 0 && $this->attendance[0]->alreadyAttended(Course::findOrFail($course_id), $this->attendance[0]))
+            return response()->json(['success' => $this->alreadyAttendMessage], $this->successStatus);  
         return response()->json(['success' => $this->notAttendMessage], $this->successStatus);
     }
 
