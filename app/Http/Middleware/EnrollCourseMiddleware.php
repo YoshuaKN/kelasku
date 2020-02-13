@@ -17,13 +17,9 @@ class EnrollCourseMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::user()->user_type != 'S') {
-            return response()->json(['error' => 'Only student can access this method'], 403);
-        }
         if (Course::findOrfail($request->course_id)->hasUser(Auth::user())) {
-            return response()->json(['error' => 'Already enroll this course'], $this->successStatus);
+            return response()->json(['error' => 'Already enroll this course'], 403);
         }
-
         return $next($request);
     }
 }

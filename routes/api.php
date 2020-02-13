@@ -1,27 +1,4 @@
 <?php
-/*
-    FITUR BELUM JADI :
-        1. MATERI / TUGAS TIAP course @Route V
-        2. UPLOAD FILE GURU (BISA DILIHAT SEMUA ORANG YANG BERADA DI course TERSEBUT)
-        3. UPLOAD FILE SISWA (UNTUK MENGIRIMKAN TUGAS KE GURU DAN HANYA DAPAT DILIHAT OLEH GURU DAN SISWA PENGIRIM)
-        4. LIHAT DAFTAR ORANG DALAM SATU course @Route V
-        5. GURU LIHAT DAFTAR HADIR TIAP SISWA  @Route V
-        6. ENROLL DALAM course @Route V
-        7. GET course DARI USER TERTENTU @Route V
-
-    FILE GET TYPE
-        1. USER GET ALL SHAREABLE -> GENERATE LINKS FOR ONE SHAREABLE FILE
-            1.1 USER GET ONE SHAREABLE
-        2. USER GET HIS/HER OWN SUBMISION -> GENERATE LINKS FOR ONE SUBMISSION
-            2.1 USER GET ONE SUBMISSION
-        3. TEACHER GET ALL SUBMISSION -> GENERATE LINKS FOR ONE SUBMISSION
-            3.1 TEACHER GET ONE SUBMISSION
-
-    PERLU DI EDIT
-        1. OBSERVER course DELETE (UNTUK MATERIAL DAN FILE)
-        2. OBSERVER MATERIAL
-        3. OBSERVER FILE
-*/
 
 use Illuminate\Support\Facades\Route;
 
@@ -41,7 +18,7 @@ Route::group(['middleware' => 'auth:api'], function(){ //Only authenticated user
     Route::prefix('/course')->group(function () { //Grouping Course paths
         Route::get('/', 'API\CourseController@getAllCourse'); //Get all user's Course
         Route::post('/', 'API\CourseController@postCreateCourse')->middleware('auth.teacher'); //Create a new Course
-        Route::post('{course_id}/enroll', 'API\CourseController@postEnrollCourse')->middleware('auth.enroll');
+        Route::post('/{course_id}/enroll', 'API\CourseController@postEnrollCourse')->middleware('auth.student')->middleware('auth.enroll');
 
         Route::group(['middleware' => 'auth.course'], function(){
             Route::get('/{course_id}', 'API\CourseController@getOneCourse'); //Get Course for given id
@@ -51,8 +28,8 @@ Route::group(['middleware' => 'auth:api'], function(){ //Only authenticated user
             Route::get('/{course_id}/status', 'API\CourseController@getStatusCourse')->middleware('course.open'); //Get Course status (open/close)
             // Route::get('{course_id}/users/{user_id}', 'API\CourseController@getOneUserCourse')->middleware('auth.Course');
 
-            Route::get('/{course_id}/attend', 'API\AttendanceController@getAllAttend'); //Get all attend in Course for given id
             Route::post('/{course_id}/attend', 'API\AttendanceController@postCreateAttend')->middleware('course.open'); //Attend a Course for given id
+            Route::get('/{course_id}/attend', 'API\AttendanceController@getAllAttend'); //Get all attend in Course for given id
             Route::get('/{course_id}/attend/status', 'API\AttendanceController@getStatusAttend'); //Get user's Course attendance status for given id (attended/not-attended)
             Route::get('/{course_id}/attend/users', 'API\AttendanceController@getAllUsersAttend')->middleware('auth.teacher'); //Get user's Course attendance status for given id (attended/not-attended)
 

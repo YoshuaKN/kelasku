@@ -36,11 +36,11 @@ class UserController extends Controller
     }
 
     public function getDetailUser($user_id){
-        return response()->json(['success' => User::find($user_id)], $this->successStatus);
+        return response()->json(['success' => User::findOrFail($user_id)], $this->successStatus);
     }
     
     public function getAllCourseUser($user_id){
-        return response()->json(['success' => User::find($user_id)->course], $this->successStatus);
+        return response()->json(['success' => User::findOrFail($user_id)->course], $this->successStatus);
     }
 
     public function getDetailsLoginUser(){

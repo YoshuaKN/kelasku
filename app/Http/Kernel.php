@@ -64,6 +64,7 @@ class Kernel extends HttpKernel
         //custom
         'auth.course' =>\App\Http\Middleware\CourseAuthMiddleware::class,
         'auth.teacher' =>\App\Http\Middleware\TeacherAuthMiddleware::class,
+        'auth.student' =>\App\Http\Middleware\StudentAuthMiddleware::class,
         'auth.enroll' =>\App\Http\Middleware\EnrollCourseMiddleware::class,
         'course.owner' =>\App\Http\Middleware\OwnerAuthMiddleware::class,
         'course.open' =>\App\Http\Middleware\CourseOpenMiddleware::class,

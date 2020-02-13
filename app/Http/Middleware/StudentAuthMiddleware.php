@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
-class TeacherAuthMiddleware
+class StudentAuthMiddleware
 {
     /**
      * Handle an incoming request.
@@ -16,10 +16,10 @@ class TeacherAuthMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::user()->user_type != 'T') {
-            return response()->json(['error' => 'Only teacher can access this method'], 403);
+        if (Auth::user()->user_type != 'S') {
+            return response()->json(['error' => 'Only student can access this method'], 403);
         }
-        return "asd";
+        
         return $next($request);
     }
 }
