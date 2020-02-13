@@ -17,6 +17,7 @@ Route::group(['middleware' => 'auth:api'], function(){ //Only authenticated user
 
     Route::prefix('/course')->group(function () { //Grouping Course paths
         Route::get('/', 'API\CourseController@getAllCourse'); //Get all user's Course
+        // Route::post('/', 'API\CourseController@postCreateCourse'); //Create a new Course
         Route::post('/', 'API\CourseController@postCreateCourse')->middleware('auth.teacher'); //Create a new Course
         Route::post('/{course_id}/enroll', 'API\CourseController@postEnrollCourse')->middleware('auth.student')->middleware('auth.enroll');
 

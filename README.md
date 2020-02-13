@@ -30,6 +30,7 @@
 ## Get Course
 ### Done
 ## Create Course
+### Done
 ## Update Course
 ## Delete Course
 ## Get All Users In Course

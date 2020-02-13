@@ -26,8 +26,8 @@ class CourseRequest extends FormRequest
         return [
             'name' => 'required|max:255',
             'day' => 'required|integer|between:0,6',
-            'time_start' => 'date_format:H:i',
-            'time_end' => 'date_format:H:i|after:time_start',
+            'time_start' => 'required|date_format:H:i',
+            'time_end' => 'required|date_format:H:i|after:time_start',
         ];
     }
 }

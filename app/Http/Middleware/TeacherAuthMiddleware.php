@@ -19,7 +19,7 @@ class TeacherAuthMiddleware
         if (Auth::user()->user_type != 'T') {
             return response()->json(['error' => 'Only teacher can access this method'], 403);
         }
-        return "asd";
+
         return $next($request);
     }
 }
