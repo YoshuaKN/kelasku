@@ -34,6 +34,7 @@
 ## Update Course
 ### Done
 ## Delete Course
+### Done
 ## Get All Users In Course
 ### Done ???
 ## Get Course Status
@@ -45,32 +46,52 @@
 ## Get User Attend Statuses Now
 ### Done
 ## Get All Attends Status In Course
+### Done
 ## Get All Materials In A Course
+### Done
 ## Create A Material
+### Done
 
 # Material Must In Course
 ## Get A Material
+### Done
 ## Update A Material
+### Done
 ## Delete A Material
+### Done
 ## Get All Shareable File
+### Done
 ## Upload A Shareable File
+### Done
 ## Get A Shareable File
+### Done
 ## Delete A Shareable File
+### Done
 ## Get All Submit File In Material
+### Done
 ## Upload A Submit File
+### Done
 ## Get A Submit File
+### Done
 ## Delete A Submit File
+### Done
 
 # Middleware Check
 ## auth.course
+### Done
 ## auth.teacher
+### Done
 ## auth.student
 ### Done
 ## auth.enroll
 ### Done
 ## course.owner
 ## course.material
+### Done
 ## file.owner|teacher
+### Done
 ## file.shareable
+### Done
 ## file.submit
+### Done
 

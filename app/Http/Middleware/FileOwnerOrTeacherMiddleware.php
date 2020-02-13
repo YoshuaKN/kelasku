@@ -18,8 +18,8 @@ class FileOwnerOrTeacherMiddleware
     public function handle($request, Closure $next)
     {
         $user = Auth::user();
-        if (File::findOrFail($request->file_id)->owner != $user->id || $user->user_type != 'T') 
-            return response()->json(['error' => 'Only the owner or teacher can access this method'], 403);
+        if (File::findOrFail($request->file_id)->owner != $user->id && $user->user_type != 'T') 
+            return response()->json(['error' => File::findOrFail($request->file_id)->owner], 403);
 
         return $next($request);
     }

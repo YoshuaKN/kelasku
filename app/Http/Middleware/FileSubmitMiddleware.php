@@ -16,7 +16,7 @@ class FileSubmitMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (File::find($request->file_id)->shareable) 
+        if (File::findOrFail($request->file_id)->shareable) 
             return response()->json(['error' => 'This file is shareable'], 403);
 
         return $next($request);
