@@ -21,6 +21,7 @@
     | ------ | ------ |
     | email | Required, Value = email format (example@kelasku.com). |
     | password | Required, MIN = 8 character. |
+- Return : Token for login.
 
 ### Logout
 - Usage : Logout from the current user. (It will delete OauthAcessToken)
@@ -30,7 +31,6 @@
     - Must Authenticated.
 
 ## User
-
 ### Get your own user profile
 - Method : GET.
 - URL : /api/user
@@ -56,6 +56,13 @@
 - Rules : 
     - Must Authenticated.
 
+### Enroll a course
+- Method : POST.
+- URL : /api/courses/{course_id}/enroll
+- Rules : 
+    - Must Authenticated.
+    - Must be a student.
+    - Must not be registerd in this course. 
 
 ### Create a new course
 - Method : POST.
@@ -71,13 +78,12 @@
     - Must Authenticated.
     - Must be a teacher.
 
-
 ### Get a course that you have enrolled /created
 - Method : GET.
 - URL : /api/courses/{course_id}
 - Rules : 
     - Must Authenticated.
-
+    - User must already be registered in the course. 
 
 ### Update a course
 - Method : PUT.
@@ -91,23 +97,18 @@
     | time_end | Required, Value = date format H:i (example : 13:00), This value must bigger than time_start. |
 - Rules : 
     - Must Authenticated.
+    - User must already be registered in the course. 
     - Must be a teacher.
-
+    - Must be the course owner.
 
 ### Delete a course
 - Method : DELETE.
 - URL : /api/courses/{course_id}
 - Rules : 
     - Must Authenticated.
-    - Must be a teacher.
-
-
-### Enroll a course
-- Method : POST.
-- URL : /api/courses/{course_id}/enroll
-- Rules : 
-    - Must Authenticated.
     - User must already be registered in the course. 
+    - Must be a teacher.
+    - Must be the course owner.
 
 ### Get course status (open/close)
 - Method : GET.
@@ -273,6 +274,7 @@
     - Must Authenticated.
     - User must already be registered in the course. 
     - Material must in the course.
+    - Must be a student.
 
 ### Download the submited file
 - Method : GET.
