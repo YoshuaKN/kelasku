@@ -43,10 +43,10 @@ Route::group(['middleware' => 'auth:api'], function(){ //Only authenticated user
                 Route::get('/{course_id}/materials/{material_id}/file', 'API\FileController@getAllShareableFile');
                 Route::post('/{course_id}/materials/{material_id}/file', 'API\FileController@postUploadShareableFile')->middleware('auth.teacher'); 
                 Route::get('/{course_id}/materials/{material_id}/file/{file_id}', 'API\FileController@getOneFile')->middleware('file.shareable');
-                Route::delete('/{course_id}/materials/{material_id}/file/{file_id}', 'API\FileController@deleteOneFile')->middleware('file.owner|teacher')->middleware('file.shareable');
+                Route::delete('/{course_id}/materials/{material_id}/file/{file_id}', 'API\FileController@deleteOneFile')->middleware('auth.teacher')->middleware('file.shareable');
 
                 Route::get('/{course_id}/materials/{material_id}/submit', 'API\FileController@getAllSubmitFile');
-                Route::post('/{course_id}/materials/{material_id}/submit', 'API\FileController@postUploadSubmitFile');
+                Route::post('/{course_id}/materials/{material_id}/submit', 'API\FileController@postUploadSubmitFile')->middleware('auth.student');
                 Route::get('/{course_id}/materials/{material_id}/submit/{file_id}', 'API\FileController@getOneFile')->middleware('file.submit');
                 Route::delete('/{course_id}/materials/{material_id}/submit/{file_id}', 'API\FileController@deleteOneFile')->middleware('file.owner|teacher')->middleware('file.submit');
             });
