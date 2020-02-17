@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class CourseController extends Controller{
     private $successStatus = 200;
-    private $createCourseMessage = "Create Course success";
     private $deleteCourseMessage = "Delete Course success";
     private $updateCourseessage = "Update Course success";
     private $enrollMessage = "Enroll success";
@@ -33,7 +32,7 @@ class CourseController extends Controller{
     public function postCreateCourse(CourseRequest $request){
         $course = new Course();
         $course->customCreate($request, $this->user);
-        return response()->json(['success' => $this->createCourseMessage], $this->successStatus);
+        return response()->json(['success' => $course], $this->successStatus);
     }
 
     public function putUpdateCourse(CourseRequest $request, $course_id){

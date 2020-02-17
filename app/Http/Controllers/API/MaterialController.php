@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 class MaterialController extends Controller
 {
     private $successStatus = 200;
-    private $createMaterialMessage = "Create material success";
     private $updateMaterialMessage = "Update material success";
     private $deleteMaterialMessage = "Delete material success";
 
@@ -33,7 +32,7 @@ class MaterialController extends Controller
     public function postCreateMaterial(MaterialRequest $request){
         $material = new Material;
         $material->customCreate($request, $request->course_id);
-        return response()->json(['success' => $this->createMaterialMessage], $this->successStatus);
+        return response()->json(['success' => $material], $this->successStatus);
     }
 
     public function putUpdateMaterial(MaterialRequest $request){
