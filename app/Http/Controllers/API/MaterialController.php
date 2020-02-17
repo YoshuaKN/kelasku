@@ -27,10 +27,6 @@ class MaterialController extends Controller
     }
 
     public function getOneMaterial(Request $request){
-        // Material::find($request->material_id)->file->each(function ($child) {
-        //     return $child;
-        // });
-        // return Material::find($request->material_id)->file;
         return response()->json(['success' => Material::find($request->material_id)], $this->successStatus);
     }
 
@@ -47,7 +43,6 @@ class MaterialController extends Controller
     }
 
     public function deleteOneMaterial(Request $request){
-        // return Material::find($request->material_id)->file;
         Material::find($request->material_id)->delete();
         return response()->json(['success' => $this->deleteMaterialMessage], $this->successStatus);
     }
