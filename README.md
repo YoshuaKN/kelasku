@@ -77,6 +77,7 @@
 - Rules : 
     - Must Authenticated.
     - Must be a teacher.
+- Return : The created course data (note : In video still return message "created success")
 
 ### Get a course that you have enrolled /created
 - Method : GET.
@@ -177,6 +178,7 @@
     - Must Authenticated.
     - User must already be registered in the course. 
     - Must be a teacher.
+- Return : The created material data (note : In video still return message "created success")
 
 ### Get a material
 - Method : GET.
