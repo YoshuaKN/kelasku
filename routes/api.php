@@ -10,9 +10,9 @@ Route::group(['middleware' => 'auth:api'], function(){ //Only authenticated user
     Route::post('logout','API\UserController@logout'); //Logout
 
     Route::prefix('/users')->group(function () { //Grouping user paths
-        Route::get('/', 'API\UserController@getDetailsLoginUser'); //Get detail from login user
-        Route::get('/{user_id}', 'API\UserController@getDetailUser'); //Get detail from login user
-        Route::get('/{user_id}/courses', 'API\UserController@getAllCourseUser'); 
+        Route::get('/', 'API\UserController@getDetailUser'); //Get detail from login user
+        Route::get('/{user_id}', 'API\UserController@getDetailOtherUser'); //Get detail from login user
+        Route::get('/{user_id}/courses', 'API\UserController@getAllUserCourse'); 
     });
 
     Route::prefix('/courses')->group(function () { //Grouping Course paths
