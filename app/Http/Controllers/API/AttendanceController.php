@@ -23,11 +23,11 @@ class AttendanceController extends Controller
         });
     }
 
-    public function getAllAttend(){
+    public function getAll(){
         return response()->json(['success' => $this->attendance], $this->successStatus);
     }
 
-    public function postCreateAttend($course_id){
+    public function store($course_id){
         if ($this->getStatusAttend($course_id) == response()->json(['success' => $this->alreadyAttendMessage], $this->successStatus)) {
             return response()->json(['error' => $this->alreadyAttendMessage], $this->successStatus);
         }
@@ -36,13 +36,13 @@ class AttendanceController extends Controller
         return response()->json(['success' => $this->attendMessage], $this->successStatus);
     }
 
-    public function getStatusAttend($course_id){
+    public function getStatus($course_id){
         if ($this->attendance->count() != 0 && $this->attendance[0]->alreadyAttended(Course::findOrFail($course_id), $this->attendance[0]))
             return response()->json(['success' => $this->alreadyAttendMessage], $this->successStatus);  
         return response()->json(['success' => $this->notAttendMessage], $this->successStatus);
     }
 
-    public function getAllUsersAttend($course_id){
+    public function getAllUsers($course_id){
         $attendance = Attendance::where('course_id', $course_id)->where('created_at', '>', now()->subdays(6))->orderBy('created_at', 'DESC')->get();
         return response()->json(['success' => $attendance], $this->successStatus);
     }

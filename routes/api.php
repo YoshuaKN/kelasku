@@ -16,21 +16,21 @@ Route::group(['middleware' => 'auth:api'], function(){ //Only authenticated user
     });
 
     Route::prefix('/courses')->group(function () { //Grouping Course paths
-        Route::get('/', 'API\CourseController@getAllCourse'); //Get all user's Course
-        Route::post('/', 'API\CourseController@postCreateCourse')->middleware('auth.teacher'); //Create a new Course
-        Route::post('/{course_id}/enroll', 'API\CourseController@postEnrollCourse')->middleware('auth.student')->middleware('auth.enroll');
+        Route::get('/', 'API\CourseController@getAll'); //Get all user's Course
+        Route::post('/', 'API\CourseController@store')->middleware('auth.teacher'); //Create a new Course
+        Route::post('/{course_id}/enroll', 'API\CourseController@enroll')->middleware('auth.student')->middleware('auth.enroll');
 
         Route::group(['middleware' => 'auth.course'], function(){
-            Route::get('/{course_id}', 'API\CourseController@getOneCourse'); //Get Course for given id
-            Route::put('/{course_id}', 'API\CourseController@putUpdateCourse')->middleware('auth.teacher')->middleware('course.owner'); //Update Course for given id
-            Route::delete('/{course_id}', 'API\CourseController@deleteOneCourse')->middleware('auth.teacher')->middleware('course.owner'); //Delete Course for given id
-            Route::get('/{course_id}/status', 'API\CourseController@getStatusCourse')->middleware('course.open'); //Get Course status (open/close)
-            Route::get('{course_id}/users', 'API\CourseController@getUsersCourse');
+            Route::get('/{course_id}', 'API\CourseController@show'); //Get Course for given id
+            Route::put('/{course_id}', 'API\CourseController@update')->middleware('auth.teacher')->middleware('course.owner'); //Update Course for given id
+            Route::delete('/{course_id}', 'API\CourseController@destroy')->middleware('auth.teacher')->middleware('course.owner'); //Delete Course for given id
+            Route::get('/{course_id}/status', 'API\CourseController@getStatus')->middleware('course.open'); //Get Course status (open/close)
+            Route::get('{course_id}/users', 'API\CourseController@getUsers');
        
-            Route::post('/{course_id}/attend', 'API\AttendanceController@postCreateAttend')->middleware('course.open'); //Attend a Course for given id
-            Route::get('/{course_id}/attend', 'API\AttendanceController@getAllAttend'); //Get all attend in Course for given id
-            Route::get('/{course_id}/attend/status', 'API\AttendanceController@getStatusAttend'); //Get user's Course attendance status for given id (attended/not-attended)
-            Route::get('/{course_id}/attend/users', 'API\AttendanceController@getAllUsersAttend')->middleware('auth.teacher'); //Get user's Course attendance status for given id (attended/not-attended)
+            Route::post('/{course_id}/attend', 'API\AttendanceController@store')->middleware('course.open'); //Attend a Course for given id
+            Route::get('/{course_id}/attend', 'API\AttendanceController@getAll'); //Get all attend in Course for given id
+            Route::get('/{course_id}/attend/status', 'API\AttendanceController@getStatus'); //Get user's Course attendance status for given id (attended/not-attended)
+            Route::get('/{course_id}/attend/users', 'API\AttendanceController@getAllUsers')->middleware('auth.teacher'); //Get user's Course attendance status for given id (attended/not-attended)
 
             Route::get('/{course_id}/materials', 'API\MaterialController@getAllMaterials'); //Get all material in Course for given id
             Route::post('/{course_id}/materials', 'API\MaterialController@postCreateMaterial')->middleware('auth.teacher'); //Create new material in Course for given id
