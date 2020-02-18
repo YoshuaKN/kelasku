@@ -40,15 +40,15 @@ Route::group(['middleware' => 'auth:api'], function(){ //Only authenticated user
                 Route::put('/{course_id}/materials/{material_id}', 'API\MaterialController@update')->middleware('auth.teacher')->middleware('course.owner'); 
                 Route::delete('/{course_id}/materials/{material_id}', 'API\MaterialController@destroy')->middleware('auth.teacher')->middleware('course.owner');
 
-                Route::get('/{course_id}/materials/{material_id}/file', 'API\FileController@getAllShareableFile');
-                Route::post('/{course_id}/materials/{material_id}/file', 'API\FileController@postUploadShareableFile')->middleware('auth.teacher'); 
-                Route::get('/{course_id}/materials/{material_id}/file/{file_id}', 'API\FileController@getOneFile')->middleware('file.shareable');
-                Route::delete('/{course_id}/materials/{material_id}/file/{file_id}', 'API\FileController@deleteOneFile')->middleware('auth.teacher')->middleware('file.shareable');
+                Route::get('/{course_id}/materials/{material_id}/file', 'API\FileController@getAllShareable');
+                Route::post('/{course_id}/materials/{material_id}/file', 'API\FileController@storeShareable')->middleware('auth.teacher'); 
+                Route::get('/{course_id}/materials/{material_id}/file/{file_id}', 'API\FileController@show')->middleware('file.shareable');
+                Route::delete('/{course_id}/materials/{material_id}/file/{file_id}', 'API\FileController@destroy')->middleware('auth.teacher')->middleware('file.shareable');
 
-                Route::get('/{course_id}/materials/{material_id}/submit', 'API\FileController@getAllSubmitFile');
-                Route::post('/{course_id}/materials/{material_id}/submit', 'API\FileController@postUploadSubmitFile')->middleware('auth.student');
-                Route::get('/{course_id}/materials/{material_id}/submit/{file_id}', 'API\FileController@getOneFile')->middleware('file.submit');
-                Route::delete('/{course_id}/materials/{material_id}/submit/{file_id}', 'API\FileController@deleteOneFile')->middleware('file.owner|teacher')->middleware('file.submit');
+                Route::get('/{course_id}/materials/{material_id}/submit', 'API\FileController@getAllSubmit');
+                Route::post('/{course_id}/materials/{material_id}/submit', 'API\FileController@storeSubmit')->middleware('auth.student');
+                Route::get('/{course_id}/materials/{material_id}/submit/{file_id}', 'API\FileController@show')->middleware('file.submit');
+                Route::delete('/{course_id}/materials/{material_id}/submit/{file_id}', 'API\FileController@destroy')->middleware('file.owner|teacher')->middleware('file.submit');
             });
         });
     }); 

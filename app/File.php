@@ -25,7 +25,7 @@ class File extends Model
         $this->save();
     }
 
-    public function getFile(){
+    public function makeLink(){
         $file = new stdClass();
         $file->name = $this->name;
         $file->link = url()->current().'/'.$this->id;

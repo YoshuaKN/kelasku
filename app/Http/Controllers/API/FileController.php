@@ -21,30 +21,21 @@ class FileController extends Controller
             return $next($request);
         });
     }
+
     public function getAllFileLinks($files){
         $file_links = array();
         foreach ($files as $file) {
-            array_push($file_links, $file->getFile());
+            array_push($file_links, $file->makeLink());
         }
         return $file_links;
     }
 
-    public function getOneFile(Request $request){
-        $file = File::find($request->file_id);
-        return Storage::download($file->path, $file->name);
-    }
-
-    public function deleteOneFile(Request $request){
-        File::find($request->file_id)->delete();
-        return response()->json(['success' => $this->deleteFileMessage], $this->successStatus);
-    }
-
-    public function getAllShareableFile(Request $request){
+    public function getAllShareable(Request $request){
         $files = File::where('material_id', $request->material_id)->where('shareable', 1)->get();
         return response()->json(['success' => $this->getAllFileLinks($files)], $this->successStatus);
     }
 
-    public function getAllSubmitFile(Request $request){
+    public function getAllSubmit(Request $request){
         $files = File::where('material_id', $request->material_id)->where('shareable', 0);
         if ($this->user->user_type != 'T') 
             $files = $files->where('owner', $this->user->id);
@@ -52,17 +43,27 @@ class FileController extends Controller
         return response()->json(['success' => $this->getAllFileLinks($files)], $this->successStatus);
     }
 
-    public function postUploadShareableFile(FileRequest $request){
+    public function show(Request $request){
+        $file = File::find($request->file_id);
+        return Storage::download($file->path, $file->name);
+    }
+
+    public function storeShareable(FileRequest $request){
         $path = Storage::putFile('file/course_'.$request->course_id.'/material_'.$request->material_id.'/shareable', $request->file('file'));
         $file = new File();
         $file->customCreate($request, $this->user, $path, 1);
         return response()->json(['success' => $this->createFileMessage], $this->successStatus);
     }
 
-    public function postUploadSubmitFile(FileRequest $request){
+    public function storeSubmit(FileRequest $request){
         $path = Storage::putFile('file/course_'.$request->course_id.'/material_'.$request->material_id.'/submit', $request->file('file'));
         $file = new File();
         $file->customCreate($request, $this->user, $path, 0);
         return response()->json(['success' => $this->createFileMessage], $this->successStatus);
+    }
+
+    public function destroy(Request $request){
+        File::find($request->file_id)->delete();
+        return response()->json(['success' => $this->deleteFileMessage], $this->successStatus);
     }
 }
