@@ -42,7 +42,7 @@ class AttendanceController extends Controller
         return response()->json(['success' => $this->notAttendMessage], $this->successStatus);
     }
 
-    public function getAllUsers($course_id){
+    public function getUsers($course_id){
         $attendance = Attendance::where('course_id', $course_id)->where('created_at', '>', now()->subdays(6))->orderBy('created_at', 'DESC')->get();
         return response()->json(['success' => $attendance], $this->successStatus);
     }

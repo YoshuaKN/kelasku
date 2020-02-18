@@ -30,15 +30,15 @@ Route::group(['middleware' => 'auth:api'], function(){ //Only authenticated user
             Route::post('/{course_id}/attend', 'API\AttendanceController@store')->middleware('course.open'); //Attend a Course for given id
             Route::get('/{course_id}/attend', 'API\AttendanceController@getAll'); //Get all attend in Course for given id
             Route::get('/{course_id}/attend/status', 'API\AttendanceController@getStatus'); //Get user's Course attendance status for given id (attended/not-attended)
-            Route::get('/{course_id}/attend/users', 'API\AttendanceController@getAllUsers')->middleware('auth.teacher'); //Get user's Course attendance status for given id (attended/not-attended)
+            Route::get('/{course_id}/attend/users', 'API\AttendanceController@getUsers')->middleware('auth.teacher'); //Get user's Course attendance status for given id (attended/not-attended)
 
-            Route::get('/{course_id}/materials', 'API\MaterialController@getAllMaterials'); //Get all material in Course for given id
-            Route::post('/{course_id}/materials', 'API\MaterialController@postCreateMaterial')->middleware('auth.teacher'); //Create new material in Course for given id
+            Route::get('/{course_id}/materials', 'API\MaterialController@getAll'); //Get all material in Course for given id
+            Route::post('/{course_id}/materials', 'API\MaterialController@store')->middleware('auth.teacher'); //Create new material in Course for given id
 
             Route::group(['middleware' => 'course.material'], function(){
-                Route::get('/{course_id}/materials/{material_id}', 'API\MaterialController@getOneMaterial');
-                Route::put('/{course_id}/materials/{material_id}', 'API\MaterialController@putUpdateMaterial')->middleware('auth.teacher')->middleware('course.owner'); 
-                Route::delete('/{course_id}/materials/{material_id}', 'API\MaterialController@deleteOneMaterial')->middleware('auth.teacher')->middleware('course.owner');
+                Route::get('/{course_id}/materials/{material_id}', 'API\MaterialController@show');
+                Route::put('/{course_id}/materials/{material_id}', 'API\MaterialController@update')->middleware('auth.teacher')->middleware('course.owner'); 
+                Route::delete('/{course_id}/materials/{material_id}', 'API\MaterialController@destroy')->middleware('auth.teacher')->middleware('course.owner');
 
                 Route::get('/{course_id}/materials/{material_id}/file', 'API\FileController@getAllShareableFile');
                 Route::post('/{course_id}/materials/{material_id}/file', 'API\FileController@postUploadShareableFile')->middleware('auth.teacher'); 
