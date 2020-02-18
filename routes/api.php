@@ -27,8 +27,8 @@ Route::group(['middleware' => 'auth:api'], function(){ //Only authenticated user
             Route::get('/{course_id}/status', 'API\CourseController@getStatus')->middleware('course.open'); //Get Course status (open/close)
             Route::get('{course_id}/users', 'API\CourseController@getUsers');
        
-            Route::post('/{course_id}/attend', 'API\AttendanceController@store')->middleware('course.open'); //Attend a Course for given id
             Route::get('/{course_id}/attend', 'API\AttendanceController@getAll'); //Get all attend in Course for given id
+            Route::post('/{course_id}/attend', 'API\AttendanceController@store')->middleware('course.open'); //Attend a Course for given id
             Route::get('/{course_id}/attend/status', 'API\AttendanceController@getStatus'); //Get user's Course attendance status for given id (attended/not-attended)
             Route::get('/{course_id}/attend/users', 'API\AttendanceController@getUsers')->middleware('auth.teacher'); //Get user's Course attendance status for given id (attended/not-attended)
 

@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 14 Feb 2020 pada 03.14
--- Versi server: 10.4.6-MariaDB
--- Versi PHP: 7.1.32
+-- Generation Time: Feb 18, 2020 at 03:27 AM
+-- Server version: 10.4.6-MariaDB
+-- PHP Version: 7.1.32
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -27,11 +27,11 @@ USE `kelasku`;
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `attendance`
+-- Table structure for table `attendances`
 --
 
-DROP TABLE IF EXISTS `attendance`;
-CREATE TABLE `attendance` (
+DROP TABLE IF EXISTS `attendances`;
+CREATE TABLE `attendances` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
   `course_id` bigint(20) UNSIGNED NOT NULL,
@@ -42,11 +42,11 @@ CREATE TABLE `attendance` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `course`
+-- Table structure for table `courses`
 --
 
-DROP TABLE IF EXISTS `course`;
-CREATE TABLE `course` (
+DROP TABLE IF EXISTS `courses`;
+CREATE TABLE `courses` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `name` varchar(255) NOT NULL,
   `day` tinyint(1) NOT NULL,
@@ -60,7 +60,22 @@ CREATE TABLE `course` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `failed_jobs`
+-- Table structure for table `course_user`
+--
+
+DROP TABLE IF EXISTS `course_user`;
+CREATE TABLE `course_user` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `course_id` bigint(20) UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `failed_jobs`
 --
 
 DROP TABLE IF EXISTS `failed_jobs`;
@@ -76,11 +91,11 @@ CREATE TABLE `failed_jobs` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `file`
+-- Table structure for table `files`
 --
 
-DROP TABLE IF EXISTS `file`;
-CREATE TABLE `file` (
+DROP TABLE IF EXISTS `files`;
+CREATE TABLE `files` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `material_id` bigint(20) UNSIGNED NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -94,11 +109,11 @@ CREATE TABLE `file` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `material`
+-- Table structure for table `materials`
 --
 
-DROP TABLE IF EXISTS `material`;
-CREATE TABLE `material` (
+DROP TABLE IF EXISTS `materials`;
+CREATE TABLE `materials` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `course_id` bigint(20) NOT NULL,
   `name` varchar(100) NOT NULL,
@@ -110,7 +125,7 @@ CREATE TABLE `material` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `migrations`
+-- Table structure for table `migrations`
 --
 
 DROP TABLE IF EXISTS `migrations`;
@@ -123,7 +138,7 @@ CREATE TABLE `migrations` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `oauth_access_tokens`
+-- Table structure for table `oauth_access_tokens`
 --
 
 DROP TABLE IF EXISTS `oauth_access_tokens`;
@@ -142,7 +157,7 @@ CREATE TABLE `oauth_access_tokens` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `oauth_auth_codes`
+-- Table structure for table `oauth_auth_codes`
 --
 
 DROP TABLE IF EXISTS `oauth_auth_codes`;
@@ -158,7 +173,7 @@ CREATE TABLE `oauth_auth_codes` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `oauth_clients`
+-- Table structure for table `oauth_clients`
 --
 
 DROP TABLE IF EXISTS `oauth_clients`;
@@ -178,7 +193,7 @@ CREATE TABLE `oauth_clients` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `oauth_personal_access_clients`
+-- Table structure for table `oauth_personal_access_clients`
 --
 
 DROP TABLE IF EXISTS `oauth_personal_access_clients`;
@@ -192,7 +207,7 @@ CREATE TABLE `oauth_personal_access_clients` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `oauth_refresh_tokens`
+-- Table structure for table `oauth_refresh_tokens`
 --
 
 DROP TABLE IF EXISTS `oauth_refresh_tokens`;
@@ -206,7 +221,7 @@ CREATE TABLE `oauth_refresh_tokens` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `password_resets`
+-- Table structure for table `password_resets`
 --
 
 DROP TABLE IF EXISTS `password_resets`;
@@ -219,7 +234,7 @@ CREATE TABLE `password_resets` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `users`
+-- Table structure for table `users`
 --
 
 DROP TABLE IF EXISTS `users`;
@@ -235,175 +250,160 @@ CREATE TABLE `users` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `user_course`
---
-
-DROP TABLE IF EXISTS `user_course`;
-CREATE TABLE `user_course` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` bigint(20) UNSIGNED NOT NULL,
-  `course_id` bigint(20) UNSIGNED NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indeks untuk tabel `attendance`
+-- Indexes for table `attendances`
 --
-ALTER TABLE `attendance`
+ALTER TABLE `attendances`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `course`
+-- Indexes for table `courses`
 --
-ALTER TABLE `course`
+ALTER TABLE `courses`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `failed_jobs`
+-- Indexes for table `course_user`
+--
+ALTER TABLE `course_user`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `file`
+-- Indexes for table `files`
 --
-ALTER TABLE `file`
+ALTER TABLE `files`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `material`
+-- Indexes for table `materials`
 --
-ALTER TABLE `material`
+ALTER TABLE `materials`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `migrations`
+-- Indexes for table `migrations`
 --
 ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `oauth_access_tokens`
+-- Indexes for table `oauth_access_tokens`
 --
 ALTER TABLE `oauth_access_tokens`
   ADD PRIMARY KEY (`id`),
   ADD KEY `oauth_access_tokens_user_id_index` (`user_id`);
 
 --
--- Indeks untuk tabel `oauth_auth_codes`
+-- Indexes for table `oauth_auth_codes`
 --
 ALTER TABLE `oauth_auth_codes`
   ADD PRIMARY KEY (`id`),
   ADD KEY `oauth_auth_codes_user_id_index` (`user_id`);
 
 --
--- Indeks untuk tabel `oauth_clients`
+-- Indexes for table `oauth_clients`
 --
 ALTER TABLE `oauth_clients`
   ADD PRIMARY KEY (`id`),
   ADD KEY `oauth_clients_user_id_index` (`user_id`);
 
 --
--- Indeks untuk tabel `oauth_personal_access_clients`
+-- Indexes for table `oauth_personal_access_clients`
 --
 ALTER TABLE `oauth_personal_access_clients`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `oauth_refresh_tokens`
+-- Indexes for table `oauth_refresh_tokens`
 --
 ALTER TABLE `oauth_refresh_tokens`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `password_resets`
+-- Indexes for table `password_resets`
 --
 ALTER TABLE `password_resets`
   ADD KEY `password_resets_email_index` (`email`);
 
 --
--- Indeks untuk tabel `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `users_email_unique` (`email`);
 
 --
--- Indeks untuk tabel `user_course`
---
-ALTER TABLE `user_course`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT untuk tabel yang dibuang
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT untuk tabel `attendance`
+-- AUTO_INCREMENT for table `attendances`
 --
-ALTER TABLE `attendance`
+ALTER TABLE `attendances`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `course`
+-- AUTO_INCREMENT for table `courses`
 --
-ALTER TABLE `course`
+ALTER TABLE `courses`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `failed_jobs`
+-- AUTO_INCREMENT for table `course_user`
+--
+ALTER TABLE `course_user`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `file`
+-- AUTO_INCREMENT for table `files`
 --
-ALTER TABLE `file`
+ALTER TABLE `files`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `material`
+-- AUTO_INCREMENT for table `materials`
 --
-ALTER TABLE `material`
+ALTER TABLE `materials`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `migrations`
+-- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `oauth_clients`
+-- AUTO_INCREMENT for table `oauth_clients`
 --
 ALTER TABLE `oauth_clients`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `oauth_personal_access_clients`
+-- AUTO_INCREMENT for table `oauth_personal_access_clients`
 --
 ALTER TABLE `oauth_personal_access_clients`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `users`
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `user_course`
---
-ALTER TABLE `user_course`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 COMMIT;
 

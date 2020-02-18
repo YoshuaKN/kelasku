@@ -7,7 +7,7 @@ use stdClass;
 
 class File extends Model
 {
-    protected $table = "file";
+    protected $table = "files";
     protected $primaryKey = 'id';
     protected $fillable = [
         'name',

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Course extends Model
 {
-    protected $table = "course";
+    protected $table = "courses";
     protected $primaryKey = 'id';
     protected $fillable = [
         'name',
@@ -46,7 +46,7 @@ class Course extends Model
     }
 
     public function user(){
-        return $this->belongsToMany(User::class, "user_course", "course_id", "user_id");
+        return $this->belongsToMany(User::class, "course_user", "course_id", "user_id");
     }
 
     public function attendance() {
