@@ -12,21 +12,23 @@ class UserController extends Controller
 
     public $successStatus = 200;
 
+    //Login function 
     public function login(){
-        if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){
-            $user = Auth::user();
-            $success['token'] = $user->createToken('nApp')->accessToken;
-            return response()->json(['success' => $success], $this->successStatus);
+        if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){ //Attempt to login
+            $user = Auth::user(); 
+            $success['token'] = $user->createToken('nApp')->accessToken; //Create token
+            return response()->json(['success' => $success], $this->successStatus); 
         }
         else{
             return response()->json(['error'=>'Unauthorized'], 401);
         }
     }
 
-    public function register(UserRequest $request)
+    //Register function
+    public function register(UserRequest $request) // User Request will validate the input
     {
         $input = $request->all();
-        $input['password'] = bcrypt($input['password']);
+        $input['password'] = bcrypt($input['password']); 
         $user = User::create($input);
         $success['token'] =  $user->createToken('nApp')->accessToken;
         $success['name'] =  $user->name;

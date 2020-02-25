@@ -37,7 +37,7 @@ class FileController extends Controller
 
     public function getAllSubmit(Request $request){
         $files = File::where('material_id', $request->material_id)->where('shareable', 0);
-        if ($this->user->user_type != 'T') 
+        if ($this->user->user_type != 'T') // Validate if user is teacher
             $files = $files->where('owner', $this->user->id);
         $files = $files->get();
         return response()->json(['success' => $this->getAllFileLinks($files)], $this->successStatus);
