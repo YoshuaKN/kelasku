@@ -15,13 +15,6 @@ class FileController extends Controller
     private $createFileMessage = "Create file success";
     private $deleteFileMessage = "Delete file success";
 
-    public function __construct(){
-        $this->middleware(function ($request, $next) {
-            $this->user = Auth::user();
-            return $next($request);
-        });
-    }
-
     public function getAllFileLinks($files){
         $file_links = array();
         foreach ($files as $file) {
@@ -37,8 +30,8 @@ class FileController extends Controller
 
     public function getAllSubmit(Request $request){
         $files = File::where('material_id', $request->material_id)->where('shareable', 0);
-        if ($this->user->user_type != 'T') // Validate if user is teacher
-            $files = $files->where('owner', $this->user->id);
+        if (Auth::user()->user_type != 'T') // Validate if user is teacher
+            $files = $files->where('owner', Auth::user()->id);
         $files = $files->get();
         return response()->json(['success' => $this->getAllFileLinks($files)], $this->successStatus);
     }
@@ -51,14 +44,14 @@ class FileController extends Controller
     public function storeShareable(FileRequest $request){
         $path = Storage::putFile('file/course_'.$request->course_id.'/material_'.$request->material_id.'/shareable', $request->file('file'));
         $file = new File();
-        $file->customCreate($request, $this->user, $path, 1);
+        $file->customCreate($request, Auth::user(), $path, 1);
         return response()->json(['success' => $this->createFileMessage], $this->successStatus);
     }
 
     public function storeSubmit(FileRequest $request){
         $path = Storage::putFile('file/course_'.$request->course_id.'/material_'.$request->material_id.'/submit', $request->file('file'));
         $file = new File();
-        $file->customCreate($request, $this->user, $path, 0);
+        $file->customCreate($request, Auth::user(), $path, 0);
         return response()->json(['success' => $this->createFileMessage], $this->successStatus);
     }
 

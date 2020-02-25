@@ -14,13 +14,6 @@ class MaterialController extends Controller
     private $updateMaterialMessage = "Update material success";
     private $deleteMaterialMessage = "Delete material success";
 
-    public function __construct(){
-        $this->middleware(function ($request, $next) {
-            $this->user = Auth::user();
-            return $next($request);
-        });
-    }
-
     public function getAll($course_id){
         return response()->json(['success' => Material::where('course_id', $course_id)->get()], $this->successStatus);
     }

@@ -14,15 +14,8 @@ class CourseController extends Controller{
     private $enrollMessage = "Enroll success";
     private $CourseStatusOpenMessage = "Course has been opened";
 
-    public function __construct(){
-        $this->middleware(function ($request, $next) {
-            $this->user = Auth::user();
-            return $next($request);
-        });
-    }
-
     public function getAll(){
-        return response()->json(['success' => $this->user->Course], $this->successStatus);
+        return response()->json(['success' => Auth::user()->Course], $this->successStatus);
     }
 
     public function show($course_id){
@@ -31,13 +24,13 @@ class CourseController extends Controller{
 
     public function store(CourseRequest $request){
         $course = new Course();
-        $course->customCreate($request, $this->user);
+        $course->customCreate($request, Auth::user());
         return response()->json(['success' => $course], $this->successStatus);
     }
 
     public function update(CourseRequest $request, $course_id){
         $course = Course::findOrFail($course_id);
-        $course->customUpdate($request, $this->user);
+        $course->customUpdate($request, Auth::user());
         return response()->json(['success' => $this->updateCourseessage], $this->successStatus);
     }
 
@@ -48,7 +41,7 @@ class CourseController extends Controller{
 
     public function enroll($course_id){
         $course = Course::findOrFail($course_id);
-        $course->user()->attach($this->user);
+        $course->user()->attach(Auth::user());
         return response()->json(['success' => $this->enrollMessage], $this->successStatus);
     }
 

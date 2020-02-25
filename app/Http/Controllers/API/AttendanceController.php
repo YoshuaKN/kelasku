@@ -17,8 +17,7 @@ class AttendanceController extends Controller
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
-            $this->user = Auth::user();
-            $this->attendance = Attendance::where('user_id', $this->user->id)->where('course_id', $request->course_id)->orderBy('created_at', 'DESC')->get();
+            $this->attendance = Attendance::where('user_id', Auth::user()->id)->where('course_id', $request->course_id)->orderBy('created_at', 'DESC')->get();
             return $next($request);
         });
     }
@@ -32,7 +31,7 @@ class AttendanceController extends Controller
             return response()->json(['error' => $this->alreadyAttendMessage], $this->successStatus);
         }
         $attendance = new Attendance();
-        $attendance->customCreate($this->user->id, $course_id);
+        $attendance->customCreate(Auth::user()->id, $course_id);
         return response()->json(['success' => $this->attendMessage], $this->successStatus);
     }
 
